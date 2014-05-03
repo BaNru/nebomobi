@@ -89,7 +89,7 @@ setInterval(function() {
                             Referrer : "http://nebo.mobi/floors/0/2"
                         },
                         onload: function(response) {
-                            productФction(response.responseText, response.finalUrl)
+                            productAction(response.responseText, response.finalUrl)
                         },
                         onerror: function(response) {
                             console.log(response);
@@ -110,7 +110,7 @@ setInterval(function() {
 }
 
 /* Функция закупки */
-function productФction(text,ref){
+function productAction(text,ref){
 
 	var parser    = new DOMParser();
 	var doc       = parser.parseFromString(text, "text/html");
