@@ -170,7 +170,7 @@ if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
 			var interval = setInterval(function(){
 				golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
 				if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
-					end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, 'http://nebo.mobi/floors/0/5') 
+					end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, 'http://nebo.mobi/floors/0/5');
 				};
 				i++;
 				if (i == l){
@@ -256,13 +256,13 @@ function AddTable(e){
 
 /* Таймеры */
 setTimeout(function(){
-    var time = document.querySelector('time');
+    var time = document.querySelectorAll('[id^=time]');
     var tl = time.length;
     var parsetime = null;    
     var date = new Date();
     for (var i = 0; i < tl; i++) {
-        time[i].title = time[i].getElementsByTagName('span')[0].innerHTML;
-        parsetime = time[i].getElementsByTagName('span')[0].innerHTML.split(/\s/);
+        time[i].title = time[i].innerHTML;
+        parsetime = time[i].innerHTML.split(/\s/);
         var d = 0, h = 0, m = 0, s = 0;
         if (parsetime[1] == 'д') {
             var d = Math.round(parsetime[0]);
@@ -279,7 +279,7 @@ setTimeout(function(){
         if (parsetime[1] == 'сек') {
             var s = Math.round(parsetime[0]);
         }
-        timer(d, h, m, s, time[i].getElementsByTagName('span')[0],i);
+        timer(d, h, m, s, time[i],i);
     }
     switch ( Notification.permission.toLowerCase() ) {
         case "granted" : break;
@@ -305,13 +305,18 @@ function timer(d, h, m, s, id, i) {
 	var seconds_left = (((d*24+h)*60)+m)*60+s;
     var int = [];
     int[i] = setInterval(function () {
+		var seconds_left_d, seconds_left_h,
+			days, hours, minutes, seconds;
 		seconds_left--;
         days = parseInt(seconds_left / 86400);
-        seconds_left = seconds_left % 86400;
-        hours = parseInt(seconds_left / 3600);
-        seconds_left = seconds_left % 3600;
-        minutes = parseInt(seconds_left / 60);
+        seconds_left_d = seconds_left % 86400;
+        hours = parseInt(seconds_left_d / 3600);
+        seconds_left_h = seconds_left % 3600;
+        minutes = parseInt(seconds_left_h / 60);
         seconds = parseInt(seconds_left % 60);
+		if ((hours+"").length == 1){hours = "0"+hours}
+		if ((minutes+"").length == 1){minutes = "0"+minutes}
+		if ((seconds+"").length == 1){seconds = "0"+seconds}
         id.innerHTML = days + " д, " + hours + ":"
                      + minutes + ":" + seconds;
         if(days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0){
@@ -319,7 +324,7 @@ function timer(d, h, m, s, id, i) {
 			var pn  = id.parentNode.parentNode;
 			var notify = new Notification(pn.getElementsByTagName('span')[0].innerHTML, {
 				tag : "nebo.mobi",
-				body : pn.getElementsByTagName('span')[3].getElementsByTagName('span')[0].innerHTML,
+				body : pn.getElementsByTagName('span')[3].innerHTML,
 				icon : pn.parentNode.getElementsByTagName('img')[0].src
 			});
         }
