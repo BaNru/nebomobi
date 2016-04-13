@@ -6,6 +6,7 @@
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
+// @author   	BaNru
 // ==/UserScript==
 
 console.log('НебоБот Запущен');
