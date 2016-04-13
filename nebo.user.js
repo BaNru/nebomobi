@@ -2,77 +2,99 @@
 // @name        Небоскреб
 // @namespace   Игры
 // @include     http://nebo.mobi/*
-// @version     1
+// @version     1.02
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
-// @copyright   BaNru (2014)
+// @copyright   BaNru (2014-2016)
 // ==/UserScript==
 
 console.log('НебоБот Запущен');
 
-/* Лифтер */
-if (/nebo.mobi\/lift/.exec(window.location)) {
-setInterval(function(){
+/* Функции */
 
-	GM_xmlhttpRequest({
-        method: "GET",
-		url: 'http://nebo.mobi/lift',
-		headers : {
-			Referrer : "http://nebo.mobi/lift"
+/**
+ *
+ * end_xhr
+ *
+ * Последний запрос - выполнение действия и вывод ответ на экран
+ *
+ * url - страница действия
+ * text - сообщение для вывода на экран
+ * time - вреия ожидания перед действие
+ * ref - реферал, если разрешено в браузере
+ *
+ */
+function end_xhr(url, text, time, ref) {
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		// Расскоментировать строчку, если разрешены рефералы в браузере,
+		// немного повышает защиту бота
+		// xhr2.setRequestHeader('Referer', ref);
+		xhr.onload = function() {
+			AddTable(text);
+			console.log(url, xhr.responseURL);
 		},
-		onload: function(response) {
-
-			var parser = new DOMParser();
-			var doc = parser.parseFromString(response.responseText, "text/html");
-			var lift = doc.getElementsByClassName('lift')[0];
-
-			if (lift.getElementsByClassName('tdu')[0]) {
-                var golink = lift.getElementsByClassName('tdu')[0].href || 'http://nebo.mobi/'+lift.getElementsByClassName('tdu')[0].getAttribute('href');
-				setTimeout(function(){
-				GM_xmlhttpRequest({
-					method: "GET",
-					url: golink,
-					headers : {
-						Referrer : "http://nebo.mobi/lift"
-					},
-					onload: function(response) {
-						AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
-                        console.log(golink, response.finalUrl);
-					},
-					onerror: function(response) {
-						console.log(response);
-					}
-				});
-				}, 3000);
-			} else {
-				// TODO Сделать паузу согласно указанному времени
-				document.getElementById('empty_table').innerHTML = parseFloat(document.getElementById('empty_table').innerHTML)+1||0+1;
-				AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
-			}
-
-		},
-		onerror: function(response) {
-			console.log(response);
+		xhr.onerror = function() {
+			console.log(xhr);
 		}
-	});
-	
-}, 5000);
+		xhr.send();
+	}, time);
 }
 
 
+/* Лифтер */
+if (/nebo.mobi\/lift/.exec(window.location)) {
+	setInterval(function(){
+
+		var xhr = new XMLHttpRequest();
+
+		xhr.open('GET', 'http://nebo.mobi/lift', true);
+		// Расскоментировать строчку, если разрешены рефералы в браузере,
+		// немного повышает защиту бота
+		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/lift');
+
+		xhr.onload = function() {
+
+				var parser = new DOMParser();
+				var doc = parser.parseFromString(xhr.responseText, "text/html");
+				var lift = doc.getElementsByClassName('lift')[0];
+
+				if (lift && lift.getElementsByClassName('tdu')[0]) {
+					end_xhr(
+						lift.getElementsByClassName('tdu')[0].href ||
+						'http://nebo.mobi/'+lift.getElementsByClassName('tdu')[0].getAttribute('href'),
+						lift.innerHTML.replace('<div class="clb"></div>',''),
+						3000,
+						'http://nebo.mobi/lift'
+					);
+				} else {
+					// TODO Сделать паузу согласно указанному времени
+					document.getElementById('empty_table').innerHTML = parseFloat(document.getElementById('empty_table').innerHTML)+1||0+1;
+					AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
+				}
+
+		};
+		xhr.onerror = function() {
+			console.log(xhr);
+		};
+		xhr.send();
+	}, 5000);
+}
 
 /* Закупаем товар */
 if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
-setInterval(function() {
-	GM_xmlhttpRequest({
-        method: "GET",
-		url: 'http://nebo.mobi/floors/0/2',
-		headers : {
-			Referrer : "http://nebo.mobi/floors/0/2"
-		},
-		onload: function(response) {
+	setInterval(function() {
+
+		var xhr = new XMLHttpRequest();
+	    xhr.open('GET', 'http://nebo.mobi/floors/0/2', true);
+		// Расскоментировать строчку, если разрешены рефералы в браузере,
+		// немного повышает защиту бота
+		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/2');
+
+		xhr.onload = function() {
 			var parser = new DOMParser();
-			var doc = parser.parseFromString(response.responseText, "text/html")
+			var doc = parser.parseFromString(xhr.responseText, "text/html")
 			var tower = doc.getElementsByClassName('tower')[0];
 			var links = tower.getElementsByClassName('tdu');
 			var l = links.length;
@@ -80,33 +102,29 @@ setInterval(function() {
 			var interval = setInterval(function(){
                 golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
 				if (/nebo\.mobi\/(?:\.\.\/)*floor\//.exec(golink)) {
-                    console.log(golink);
-                    AddTable(tower.querySelectorAll('li')[i].innerHTML);
-                    GM_xmlhttpRequest({
-                        method: "GET",
-                        url: golink,
-                        headers : {
-                            Referrer : "http://nebo.mobi/floors/0/2"
-                        },
-                        onload: function(response) {
-                            productAction(response.responseText, response.finalUrl)
-                        },
-                        onerror: function(response) {
-                            console.log(response);
-                        }
-                    });
+					var xhr2 = new XMLHttpRequest();
+					xhr2.open('GET', golink, true);
+                    // xhr2.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/2');
+					xhr2.onload = function() {
+						productAction(xhr2.responseText, xhr2.responseURL)
+					};
+					xhr2.onerror = function() {
+						console.log(xhr2);
+					};
+					xhr2.send();
 				};
 				i++;
 				if (i == l){
 					clearInterval(interval);
 				}
 			}, 3000);
-		},
-		onerror: function(response) {
-			console.log(response);
-		}
-	});
-}, 30000);
+		};
+		xhr.onerror = function() {
+			console.log(xhr);
+		};
+		xhr.send();
+
+	}, 30000);
 }
 
 /* Функция закупки */
@@ -123,20 +141,7 @@ function productAction(text,ref){
 		if (/wicket:interface=:\d+:floorPanel:product[A-Z]:emptyState:action:link::ILinkListener::/.exec(golink)) {
 			// TODO Сделать вывод закупаемого товара
 			// Сейчас выводится первый, если в магазине 1 товар на закупку
-			AddTable(prd.querySelectorAll('li')[i].innerHTML);
-				GM_xmlhttpRequest({
-				method: "GET",
-				url : golink,
-				headers : {
-					Referrer : ref
-				},
-				onload: function(response) {
-					console.log('Товар куплен', golink);
-				},
-				onerror: function(response) {
-					console.log(response);
-				}
-			});
+			end_xhr(golink, prd.querySelectorAll('li')[i].innerHTML, 100, ref)
 		}
 		console.log(i);
 		i++;
@@ -151,66 +156,47 @@ function productAction(text,ref){
 
 /* Сбор выручки */
 if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
-setInterval(function() {
-	GM_xmlhttpRequest({
-        method: "GET",
-		url: 'http://nebo.mobi/floors/0/5',
-		headers : {
-			Referrer : "http://nebo.mobi/floors/0/5"
-		},
-		onload: function(response) {
+	setInterval(function() {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://nebo.mobi/floors/0/5', true);
+		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/5');
+		xhr.onload = function() {
 			var parser = new DOMParser();
-			var doc = parser.parseFromString(response.responseText, "text/html")
+			var doc = parser.parseFromString(xhr.responseText, "text/html")
 			var tower = doc.getElementsByClassName('tower')[0];
 			var links = tower.getElementsByClassName('tdu');
 			var l = links.length;
 			var i = 0, golink = "";
 			var interval = setInterval(function(){
-                golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
-                if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
-						AddTable(tower.querySelectorAll('li')[i].innerHTML);
-						GM_xmlhttpRequest({
-							method: "GET",
-							url: golink,
-							headers : {
-								Referrer : "http://nebo.mobi/floors/0/5"
-							},
-							onload: function(response) {
-								console.log('Бабло собрано!', response.finalUrl);
-							},
-							onerror: function(response) {
-								console.log(response);
-							}
-						});
+				golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+				if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
+					end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, 'http://nebo.mobi/floors/0/5') 
 				};
 				i++;
 				if (i == l){
 					clearInterval(interval);
 				}
 			}, 3000);
-		},
-		onerror: function(response) {
-			console.log(response);
-		}
-	});
-}, 30000);
+		};
+		xhr.onerror = function() {
+			console.log(xhr);
+		};
+		xhr.send();
+	}, 30000);
 }
 
 
 
 /* Выложить товар */
 if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
-setInterval(function() {
+	setInterval(function() {
 
-	GM_xmlhttpRequest({
-        method: "GET",
-		url: 'http://nebo.mobi/floors/0/3',
-		headers : {
-			Referrer : "http://nebo.mobi/floors/0/3"
-		},
-		onload: function(response) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://nebo.mobi/floors/0/3', true);
+		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/3');
+		xhr.onload = function() {
 			var parser = new DOMParser();
-			var doc = parser.parseFromString(response.responseText, "text/html")
+			var doc = parser.parseFromString(xhr.responseText, "text/html")
 			var tower = doc.getElementsByClassName('tower')[0];
 			var links = tower.getElementsByClassName('tdu');
 			var l = links.length;
@@ -218,33 +204,19 @@ setInterval(function() {
 			var interval = setInterval(function(){
                 golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
 				if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
-						AddTable(tower.querySelectorAll('li')[i].innerHTML);
-						GM_xmlhttpRequest({
-							method: "GET",
-							url: golink,
-							headers : {
-								Referrer : "http://nebo.mobi/floors/0/3"
-							},
-							onload: function(response) {
-								console.log('Товар выложен!', response.finalUrl);
-							},
-							onerror: function(response) {
-								console.log(response);
-							}
-						});
+					end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, "http://nebo.mobi/floors/0/3");
 				};
 				i++;
 				if (i == l){
 					clearInterval(interval);
 				}
 			}, 3000);
-		},
-		onerror: function(response) {
-			console.log(response);
-		}
-	});
-
-}, 30000);
+		};
+		xhr.onerror = function() {
+			console.log(xhr);
+		};
+		xhr.send();
+	}, 30000);
 }
 
 
@@ -265,9 +237,12 @@ setTimeout(function() {
 									 +'#lift_table td > .ctrl {display:block}'
 									 +'#lift_table td{border-bottom: 1px dotted #275587}</style>'
 									 +'<table id="log_table"><tr><td id="empty_table"></td></tr></table>'
-									 +'<table id="lift_table"></table>');
+									 +'<table id="lift_table"><tr><td colspan="2">'
+									 + "<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
+									 + "Если у вас есть вопросы или пожелания, вы можете их оставить на "
+									 + "<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>"
+									 + '</td></tr></table>');
 }, 1000);
-
 
 
 /* Функция добавления в "логи" */
@@ -281,7 +256,7 @@ function AddTable(e){
 
 /* Таймеры */
 setTimeout(function(){
-    var time = document.getElementsByClassName('time');
+    var time = document.querySelector('time');
     var tl = time.length;
     var parsetime = null;    
     var date = new Date();
@@ -324,7 +299,7 @@ function firstMess(e) {
 		body : "Перезагрузите страницу!",
 		icon : "http://static.nebo.mobi/images/icons/home.png"
 	});
-};unsafeWindow.firstMess = firstMess;
+};
 
 function timer(d, h, m, s, id, i) {
 	var seconds_left = (((d*24+h)*60)+m)*60+s;
@@ -341,7 +316,6 @@ function timer(d, h, m, s, id, i) {
                      + minutes + ":" + seconds;
         if(days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0){
 			clearInterval(int[i]);
-			console.log('1');
 			var pn  = id.parentNode.parentNode;
 			var notify = new Notification(pn.getElementsByTagName('span')[0].innerHTML, {
 				tag : "nebo.mobi",
