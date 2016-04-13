@@ -35,10 +35,10 @@ function end_xhr(url, text, time, ref) {
 		xhr.onload = function() {
 			AddTable(text);
 			console.log(url, xhr.responseURL);
-		},
+		};
 		xhr.onerror = function() {
 			console.log(xhr);
-		}
+		};
 		xhr.send();
 	}, time);
 }
