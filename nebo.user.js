@@ -43,6 +43,21 @@ function end_xhr(url, text, time, ref) {
 	}, time);
 }
 
+/**
+ *
+ * rand_time
+ * Случайное время
+ *
+ * По умолчанию возвращает от 2000 до 5000 (мс);
+ * min и max задавать в секундах
+ *
+ */
+function rand_time(min, max) {
+	min = ( min || 2 ) *1000;
+	max = ( max || 5 ) *1000;
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 
 /* Лифтер */
 if (/nebo.mobi\/lift/.exec(window.location)) {
@@ -66,7 +81,7 @@ if (/nebo.mobi\/lift/.exec(window.location)) {
 						lift.getElementsByClassName('tdu')[0].href ||
 						'http://nebo.mobi/'+lift.getElementsByClassName('tdu')[0].getAttribute('href'),
 						lift.innerHTML.replace('<div class="clb"></div>',''),
-						3000,
+						rand_time(),
 						'http://nebo.mobi/lift'
 					);
 				} else {
@@ -80,7 +95,7 @@ if (/nebo.mobi\/lift/.exec(window.location)) {
 			console.log(xhr);
 		};
 		xhr.send();
-	}, 5000);
+	}, rand_time());
 }
 
 /* Закупаем товар */
@@ -101,19 +116,21 @@ if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
 			var l = links.length;
 			var i = 0, golink = "";
 			var interval = setInterval(function(){
-                golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
-				if (/nebo\.mobi\/(?:\.\.\/)*floor\//.exec(golink)) {
-					var xhr2 = new XMLHttpRequest();
-					xhr2.open('GET', golink, true);
-                    // xhr2.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/2');
-					xhr2.onload = function() {
-						productAction(xhr2.responseText, xhr2.responseURL)
+				if (links[i]) {
+					golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+					if (/nebo\.mobi\/(?:\.\.\/)*floor\//.exec(golink)) {
+						var xhr2 = new XMLHttpRequest();
+						xhr2.open('GET', golink, true);
+						// xhr2.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/2');
+						xhr2.onload = function() {
+							productAction(xhr2.responseText, xhr2.responseURL)
+						};
+						xhr2.onerror = function() {
+							console.log(xhr2);
+						};
+						xhr2.send();
 					};
-					xhr2.onerror = function() {
-						console.log(xhr2);
-					};
-					xhr2.send();
-				};
+				}
 				i++;
 				if (i == l){
 					clearInterval(interval);
@@ -138,13 +155,14 @@ function productAction(text,ref){
 	var l         = links.length;
 	var i = 0, golink = "";
 	var intl = setInterval(function(){
-        golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
-		if (/wicket:interface=:\d+:floorPanel:product[A-Z]:emptyState:action:link::ILinkListener::/.exec(golink)) {
-			// TODO Сделать вывод закупаемого товара
-			// Сейчас выводится первый, если в магазине 1 товар на закупку
-			end_xhr(golink, prd.querySelectorAll('li')[i].innerHTML, 100, ref)
+		if (links[i]) {
+			golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+			if (/wicket:interface=:\d+:floorPanel:product[A-Z]:emptyState:action:link::ILinkListener::/.exec(golink)) {
+				// TODO Сделать вывод закупаемого товара
+				// Сейчас выводится первый, если в магазине 1 товар на закупку
+				end_xhr(golink, prd.querySelectorAll('li')[i].innerHTML, 100, ref)
+			}
 		}
-		console.log(i);
 		i++;
 		if (i == l){
 			clearInterval(intl);
@@ -169,10 +187,12 @@ if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
 			var l = links.length;
 			var i = 0, golink = "";
 			var interval = setInterval(function(){
-				golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
-				if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
-					end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, 'http://nebo.mobi/floors/0/5');
-				};
+				if (links[i]) {
+					golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+					if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
+						end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, 'http://nebo.mobi/floors/0/5');
+					};
+				}
 				i++;
 				if (i == l){
 					clearInterval(interval);
@@ -203,10 +223,12 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 			var l = links.length;
 			var i = 0, golink = "";
 			var interval = setInterval(function(){
-                golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
-				if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
-					end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, "http://nebo.mobi/floors/0/3");
-				};
+				if (links[i]) {
+					golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+					if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
+						end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, "http://nebo.mobi/floors/0/3");
+					};
+				}
 				i++;
 				if (i == l){
 					clearInterval(interval);
