@@ -29,7 +29,7 @@ function end_xhr(url, text, time, ref) {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);
-		// Расскоментировать строчку, если разрешены рефералы в браузере,
+		// Раскомментировать строчку, если разрешены рефералы в браузере,
 		// немного повышает защиту бота
 		// xhr2.setRequestHeader('Referer', ref);
 		xhr.onload = function() {
@@ -66,7 +66,7 @@ if (/nebo.mobi\/lift/.exec(window.location)) {
 		var xhr = new XMLHttpRequest();
 
 		xhr.open('GET', 'http://nebo.mobi/lift', true);
-		// Расскоментировать строчку, если разрешены рефералы в браузере,
+		// Раскомментировать строчку, если разрешены рефералы в браузере,
 		// немного повышает защиту бота
 		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/lift');
 
@@ -104,7 +104,7 @@ if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
 
 		var xhr = new XMLHttpRequest();
 	    xhr.open('GET', 'http://nebo.mobi/floors/0/2', true);
-		// Расскоментировать строчку, если разрешены рефералы в браузере,
+		// Раскомментировать строчку, если разрешены рефералы в браузере,
 		// немного повышает защиту бота
 		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/2');
 
@@ -326,8 +326,8 @@ function firstMess(e) {
 
 function timer(d, h, m, s, id, i) {
 	var seconds_left = (((d*24+h)*60)+m)*60+s;
-    var int = [];
-    int[i] = setInterval(function () {
+    var int_ = [];
+    int_[i] = setInterval(function () {
 		var seconds_left_d, seconds_left_h,
 			days, hours, minutes, seconds;
 		seconds_left--;
@@ -343,7 +343,7 @@ function timer(d, h, m, s, id, i) {
         id.innerHTML = days + " д, " + hours + ":"
                      + minutes + ":" + seconds;
         if(days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0){
-			clearInterval(int[i]);
+			clearInterval(int_[i]);
 			var pn  = id.parentNode.parentNode;
 			var notify = new Notification(pn.getElementsByTagName('span')[0].innerHTML, {
 				tag : "nebo.mobi",
