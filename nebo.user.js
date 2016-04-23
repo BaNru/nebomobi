@@ -277,32 +277,41 @@ function AddTable(e){
 }
 
 
+/*
+ * Функция извлечения времени
+ */
+function getTime(t) {
+	var d = 0, h = 0, m = 0, s = 0,
+		parsetime = t.split(/\s/);
+	if (parsetime[1] == 'д') {
+		var d = Math.round(parsetime[0]);
+		var h = Math.round(parsetime[2]);
+	}
+	if (parsetime[1] == 'ч') {
+		var h = Math.round(parsetime[0]);
+		var m = Math.round(parsetime[2]);
+	}
+	if (parsetime[1] == 'м') {
+		var m = Math.round(parsetime[0]);
+		var s = Math.round(parsetime[2]);
+	}
+	if (parsetime[1] == 'сек') {
+		var s = Math.round(parsetime[0]);
+	}
+	return [d, h, m, s];
+}
+function getSecond(t) {
+	return (((t[0]*24+t[1])*60)+t[2])*60+t[3];
+}
+
+// TODO Переписать на onload
 /* Таймеры */
 setTimeout(function(){
     var time = document.querySelectorAll('[id^=time]');
     var tl = time.length;
-    var parsetime = null;    
-    var date = new Date();
     for (var i = 0; i < tl; i++) {
         time[i].title = time[i].innerHTML;
-        parsetime = time[i].innerHTML.split(/\s/);
-        var d = 0, h = 0, m = 0, s = 0;
-        if (parsetime[1] == 'д') {
-            var d = Math.round(parsetime[0]);
-            var h = Math.round(parsetime[2]);
-        }
-        if (parsetime[1] == 'ч') {
-            var h = Math.round(parsetime[0]);
-            var m = Math.round(parsetime[2]);
-        }
-        if (parsetime[1] == 'м') {
-            var m = Math.round(parsetime[0]);
-            var s = Math.round(parsetime[2]);
-        }
-        if (parsetime[1] == 'сек') {
-            var s = Math.round(parsetime[0]);
-        }
-        timer(d, h, m, s, time[i],i);
+        timer(getTime(time[i].innerHTML), time[i],true);
     }
     switch ( Notification.permission.toLowerCase() ) {
         case "granted" : break;
@@ -324,12 +333,16 @@ function firstMess(e) {
 	});
 };
 
-function timer(d, h, m, s, id, i) {
-	var seconds_left = (((d*24+h)*60)+m)*60+s;
-    var int_ = [];
-    int_[i] = setInterval(function () {
+function addZero(int_) {
+	if ((int_+"").length == 1){int_ = "0"+int_}
+	return int_;
+}
+
+function timer(time, id, notice) {
+	var seconds_left = getSecond(time);
+	var int_ = setInterval(function () {
 		var seconds_left_d, seconds_left_h,
-			days, hours, minutes, seconds;
+			days, hours, minutes, seconds, tpmcl, notifyD = {};
 		seconds_left--;
         days = parseInt(seconds_left / 86400);
         seconds_left_d = seconds_left % 86400;
@@ -337,19 +350,31 @@ function timer(d, h, m, s, id, i) {
         seconds_left_h = seconds_left % 3600;
         minutes = parseInt(seconds_left_h / 60);
         seconds = parseInt(seconds_left % 60);
-		if ((hours+"").length == 1){hours = "0"+hours}
-		if ((minutes+"").length == 1){minutes = "0"+minutes}
-		if ((seconds+"").length == 1){seconds = "0"+seconds}
-        id.innerHTML = days + " д, " + hours + ":"
-                     + minutes + ":" + seconds;
+        id.innerHTML = days + " д, " + addZero(hours) + ":"
+                     + addZero(minutes) + ":" + addZero(seconds);
         if(days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0){
-			clearInterval(int_[i]);
-			var pn  = id.parentNode.parentNode;
-			var notify = new Notification(pn.getElementsByTagName('span')[0].innerHTML, {
-				tag : "nebo.mobi",
-				body : pn.getElementsByTagName('span')[3].innerHTML,
-				icon : pn.parentNode.getElementsByTagName('img')[0].src
-			});
+			clearInterval(int_);
+			if (notice) {
+				tpmcl = id.closest('.flbdy') || false;
+				if(tpmcl){
+					notifyD.name = tpmcl.parentNode.querySelector('.flhdr > span').innerText.trim();
+					notifyD.body = tpmcl.querySelector('.state').innerText.trim();
+					notifyD.icon = tpmcl.querySelector('img').src;
+				} else if (id.closest('.flr.small.amount')) {
+					notifyD.name = id.parentNode.parentNode.querySelector('.lift .ctrl').innerText.trim();
+					notifyD.body = id.parentNode.parentNode.querySelector('.lift .nshd').innerText.trim();
+					notifyD.icon = id.parentNode.parentNode.querySelector('.lift img').src;
+				} else {
+					notifyD.name = 'Неизвестный таймер';
+					notifyD.body = 'Какой-то таймер завершился';
+					notifyD.icon = 'http://igrotop.mobi/images/game7.png';
+				}
+				var notify = new Notification(notifyD.name, {
+					tag : "nebo.mobi",
+					body : notifyD.body,
+					icon : notifyD.icon
+				});
+			}
         }
     }, 1000);
 }
