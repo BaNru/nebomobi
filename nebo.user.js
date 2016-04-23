@@ -2,7 +2,7 @@
 // @name        Небоскреб
 // @namespace   Игры
 // @include     http://nebo.mobi/*
-// @version     1.02
+// @version     1.03
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
@@ -25,7 +25,7 @@ console.log('НебоБот Запущен');
  * ref - реферал, если разрешено в браузере
  *
  */
-function end_xhr(url, text, time, ref) {
+function end_xhr(url, text, time, ref, callback) {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);
@@ -40,6 +40,7 @@ function end_xhr(url, text, time, ref) {
 			console.log(xhr);
 		};
 		xhr.send();
+		callback();
 	}, time);
 }
 
@@ -61,41 +62,48 @@ function rand_time(min, max) {
 
 /* Лифтер */
 if (/nebo.mobi\/lift/.exec(window.location)) {
-	setInterval(function(){
+	(function liftFN() {
+		setTimeout(function(){
 
-		var xhr = new XMLHttpRequest();
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'http://nebo.mobi/lift', true);
+			// Раскомментировать строчку, если разрешены рефералы в браузере,
+			// немного повышает защиту бота
+			// xhr.setRequestHeader('Referer', 'http://nebo.mobi/lift');
 
-		xhr.open('GET', 'http://nebo.mobi/lift', true);
-		// Раскомментировать строчку, если разрешены рефералы в браузере,
-		// немного повышает защиту бота
-		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/lift');
+			xhr.onload = function() {
+					var parser = new DOMParser(),
+						doc = parser.parseFromString(xhr.responseText, "text/html"),
+						lift = doc.getElementsByClassName('lift')[0],
+						ttime;
 
-		xhr.onload = function() {
+					if (lift && lift.getElementsByClassName('tdu')[0]) {
+						end_xhr(
+							lift.getElementsByClassName('tdu')[0].href ||
+							'http://nebo.mobi/'+lift.getElementsByClassName('tdu')[0].getAttribute('href'),
+							lift.innerHTML.replace('<div class="clb"></div>',''),
+							rand_time(1,3),
+							'http://nebo.mobi/lift',
+							liftFN
+						);
+					} else {
+						ttime = getTime(doc.querySelector('[id^=time]').innerHTML);
+						document.getElementById('empty_table').innerHTML = "Ждем посетителя! <span class='amount'></span>";
+						AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
+						timer(ttime, document.querySelector('#empty_table span'), false);
+						setTimeout(function(){
+							liftFN();
+						}, getSecond(ttime)*1000);
+					}
 
-				var parser = new DOMParser();
-				var doc = parser.parseFromString(xhr.responseText, "text/html");
-				var lift = doc.getElementsByClassName('lift')[0];
+			};
+			xhr.onerror = function() {
+				console.log(xhr);
+			};
+			xhr.send();
 
-				if (lift && lift.getElementsByClassName('tdu')[0]) {
-					end_xhr(
-						lift.getElementsByClassName('tdu')[0].href ||
-						'http://nebo.mobi/'+lift.getElementsByClassName('tdu')[0].getAttribute('href'),
-						lift.innerHTML.replace('<div class="clb"></div>',''),
-						rand_time(),
-						'http://nebo.mobi/lift'
-					);
-				} else {
-					// TODO Сделать паузу согласно указанному времени
-					document.getElementById('empty_table').innerHTML = parseFloat(document.getElementById('empty_table').innerHTML)+1||0+1;
-					AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
-				}
-
-		};
-		xhr.onerror = function() {
-			console.log(xhr);
-		};
-		xhr.send();
-	}, rand_time());
+		}, rand_time(3,6));
+	}());
 }
 
 /* Закупаем товар */
@@ -255,11 +263,12 @@ setInterval(function() {
 setTimeout(function() {
 	document.body.insertAdjacentHTML('beforeend',
 									  '<style>#lift_table td > img {float:left}'
-									 +'#lift_table,#log_table{left:0;top:0;position:fixed}'
-									 +'#lift_table{left:10px;width:calc(50% - 320px)}'
+									 +'#lift_table,#log_table{left:10px;position:fixed;width:calc(50% - 320px)}'
+									 +'#log_table{top:0;}'
+									 +'#lift_table{top:28px;}'
 									 +'#lift_table td > .ctrl {display:block}'
 									 +'#lift_table td{border-bottom: 1px dotted #275587}</style>'
-									 +'<table id="log_table"><tr><td id="empty_table"></td></tr></table>'
+									 +'<table id="log_table" class="hdr"><tr><td id="empty_table">&nbsp;</td></tr></table>'
 									 +'<table id="lift_table"><tr><td colspan="2">'
 									 + "<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
 									 + "Если у вас есть вопросы или пожелания, вы можете их оставить на "
@@ -271,7 +280,7 @@ setTimeout(function() {
 /* Функция добавления в "логи" */
 function AddTable(e){
 	var d = new Date();
-	var t = d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
+	var t = addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds());
 	document.getElementById('lift_table').insertAdjacentHTML('afterbegin',
 		'<tr><td>'+t+'</td><td>'+e+'</td></tr>');
 }
