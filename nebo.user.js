@@ -43,7 +43,7 @@ function end_xhr(url, text, time, ref, callback) {
 			console.log(xhr);
 		};
 		xhr.send();
-		callback();
+		if(callback)callback();
 	}, time);
 }
 
