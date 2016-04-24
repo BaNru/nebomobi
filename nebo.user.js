@@ -17,7 +17,7 @@ console.log('НебоБот Запущен');
  *
  * end_xhr
  *
- * Последний запрос - выполнение действия и вывод ответ на экран
+ * Последний запрос - выполнение действия и вывод ответа на экран
  *
  * url - страница действия
  * text - сообщение для вывода на экран
@@ -88,10 +88,11 @@ if (/nebo.mobi\/lift/.exec(window.location)) {
 						);
 					} else {
 						ttime = getTime(doc.querySelector('[id^=time]').innerHTML);
-						document.getElementById('empty_table').innerHTML = "Ждем посетителя! <span class='amount'></span>";
 						AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
-						timer(ttime, document.querySelector('#empty_table span'), false);
+						AddMessTable('Ждем посетителя!','',
+									function(){timer(ttime, document.getElementById('log_table_2'), false)});
 						setTimeout(function(){
+							AddMessTable('Развозим дальше','');
 							liftFN();
 						}, getSecond(ttime)*1000);
 					}
@@ -255,6 +256,7 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 /* Очищаем раз в час */
 setInterval(function() {
 	document.getElementById('lift_table').innerHTML = '';
+	AddTable('Логи очищены!');
 }, 3600000);
 
 
@@ -268,7 +270,8 @@ setTimeout(function() {
 									 +'#lift_table{top:28px;}'
 									 +'#lift_table td > .ctrl {display:block}'
 									 +'#lift_table td{border-bottom: 1px dotted #275587}</style>'
-									 +'<table id="log_table" class="hdr"><tr><td id="empty_table">&nbsp;</td></tr></table>'
+									 +'<table id="log_table" class="hdr"><tr><td id="log_table_1">&nbsp;</td>'
+									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
 									 +'<table id="lift_table"><tr><td colspan="2">'
 									 + "<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
 									 + "Если у вас есть вопросы или пожелания, вы можете их оставить на "
@@ -283,6 +286,11 @@ function AddTable(e){
 	var t = addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds());
 	document.getElementById('lift_table').insertAdjacentHTML('afterbegin',
 		'<tr><td>'+t+'</td><td>'+e+'</td></tr>');
+}
+function AddMessTable(f,s,callback){
+	document.getElementById('log_table_1').innerHTML = f;
+	document.getElementById('log_table_2').innerHTML = s;
+	if(callback)callback();
 }
 
 
