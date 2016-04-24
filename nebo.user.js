@@ -2,14 +2,17 @@
 // @name        Небоскреб
 // @namespace   Игры
 // @include     http://nebo.mobi/*
-// @version     1.03
+// @version     1.04
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
 // @author   	BaNru
 // ==/UserScript==
 
-console.log('НебоБот Запущен');
+var BOT = {};
+BOT.version = '1.04';
+
+console.log('НебоБот Запущен '+BOT.version);
 
 /* Функции */
 
@@ -253,33 +256,6 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 
 
 
-/* Очищаем раз в час */
-setInterval(function() {
-	document.getElementById('lift_table').innerHTML = '';
-	AddTable('Логи очищены!');
-}, 3600000);
-
-
-
-/* Создаём таблицу логов */
-setTimeout(function() {
-	document.body.insertAdjacentHTML('beforeend',
-									  '<style>#lift_table td > img {float:left}'
-									 +'#lift_table,#log_table{left:10px;position:fixed;width:calc(50% - 320px)}'
-									 +'#log_table{top:0;}'
-									 +'#lift_table{top:28px;}'
-									 +'#lift_table td > .ctrl {display:block}'
-									 +'#lift_table td{border-bottom: 1px dotted #275587}</style>'
-									 +'<table id="log_table" class="hdr"><tr><td id="log_table_1">&nbsp;</td>'
-									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
-									 +'<table id="lift_table"><tr><td colspan="2">'
-									 + "<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
-									 + "Если у вас есть вопросы или пожелания, вы можете их оставить на "
-									 + "<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>"
-									 + '</td></tr></table>');
-}, 1000);
-
-
 /* Функция добавления в "логи" */
 function AddTable(e){
 	var d = new Date();
@@ -320,26 +296,6 @@ function getTime(t) {
 function getSecond(t) {
 	return (((t[0]*24+t[1])*60)+t[2])*60+t[3];
 }
-
-// TODO Переписать на onload
-/* Таймеры */
-setTimeout(function(){
-    var time = document.querySelectorAll('[id^=time]');
-    var tl = time.length;
-    for (var i = 0; i < tl; i++) {
-        time[i].title = time[i].innerHTML;
-        timer(getTime(time[i].innerHTML), time[i],true);
-    }
-    switch ( Notification.permission.toLowerCase() ) {
-        case "granted" : break;
-        case "denied" :
-            document.body.insertAdjacentHTML('beforeend','<span style="position:fixed;top:5px;right:10px;">У вас запрещены уведомления!</span>');
-            break;
-        case "default" :
-            document.body.insertAdjacentHTML('beforeend','<a onclick="Notification.requestPermission(firstMess)" style="position:fixed;top:5px;right:10px;cursor:pointer;"><img src="http://static.nebo.mobi/images/icons/letters.png" alt="Включить уведомления"> Включить уведомления</a>');
-            break;
-	}
-}, 1000);
 
 function firstMess(e) {
 	if( e != "granted" ) return false;
@@ -394,4 +350,49 @@ function timer(time, id, notice) {
 			}
         }
     }, 1000);
+}
+
+
+window.onload = function() {
+
+	/* Создаём таблицу логов */
+	document.body.insertAdjacentHTML('beforeend',
+									  '<style>#lift_table td > img {float:left}'
+									 +'#lift_table,#log_table{left:10px;position:fixed;width:calc(50% - 320px)}'
+									 +'#log_table{top:0;}'
+									 +'#lift_table{top:28px;}'
+									 +'#lift_table td > .ctrl {display:block}'
+									 +'#lift_table td{border-bottom: 1px dotted #275587}</style>'
+									 +'<table id="log_table" class="hdr"><tr><td id="log_table_1">&nbsp;</td>'
+									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
+									 +'<table id="lift_table"><tr><td colspan="2">'
+									 + "<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
+									 + "Если у вас есть вопросы или пожелания, вы можете их оставить на "
+									 + "<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>"
+									 + '</td></tr></table>');
+
+	AddMessTable('Небобот запущен', BOT.version);
+
+	/* Таймеры */
+    var time = document.querySelectorAll('[id^=time]');
+    var tl = time.length;
+    for (var i = 0; i < tl; i++) {
+        time[i].title = time[i].innerHTML;
+        timer(getTime(time[i].innerHTML), time[i],true);
+    }
+    switch ( Notification.permission.toLowerCase() ) {
+        case "granted" : break;
+        case "denied" :
+            document.body.insertAdjacentHTML('beforeend','<span style="position:fixed;top:5px;right:10px;">У вас запрещены уведомления!</span>');
+            break;
+        case "default" :
+            document.body.insertAdjacentHTML('beforeend','<a onclick="Notification.requestPermission(firstMess)" style="position:fixed;top:5px;right:10px;cursor:pointer;"><img src="http://static.nebo.mobi/images/icons/letters.png" alt="Включить уведомления"> Включить уведомления</a>');
+            break;
+	}
+
+	/* Очищаем раз в час */
+	setInterval(function() {
+		document.getElementById('lift_table').innerHTML = '';
+		AddTable('Логи очищены!');
+	}, 3600000);
 }
