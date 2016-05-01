@@ -122,7 +122,7 @@ if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
 
 		xhr.onload = function() {
 			var parser = new DOMParser();
-			var doc = parser.parseFromString(xhr.responseText, "text/html")
+			var doc = parser.parseFromString(xhr.responseText, "text/html");
 			var tower = doc.getElementsByClassName('tower')[0];
 			var links = tower.getElementsByClassName('tdu');
 			var l = links.length;
@@ -193,7 +193,7 @@ if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
 		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/5');
 		xhr.onload = function() {
 			var parser = new DOMParser();
-			var doc = parser.parseFromString(xhr.responseText, "text/html")
+			var doc = parser.parseFromString(xhr.responseText, "text/html");
 			var tower = doc.getElementsByClassName('tower')[0];
 			var links = tower.getElementsByClassName('tdu');
 			var l = links.length;
@@ -229,7 +229,7 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/3');
 		xhr.onload = function() {
 			var parser = new DOMParser();
-			var doc = parser.parseFromString(xhr.responseText, "text/html")
+			var doc = parser.parseFromString(xhr.responseText, "text/html");
 			var tower = doc.getElementsByClassName('tower')[0];
 			var links = tower.getElementsByClassName('tdu');
 			var l = links.length;
@@ -252,6 +252,63 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 		};
 		xhr.send();
 	}, 30000);
+}
+
+
+/* Выселение людей */
+if (/nebo.mobi\/humans/.exec(window.location)) {
+	(function humansFN() {
+		setTimeout(function(){
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'http://nebo.mobi/humans', true);
+			xhr.onload = function() {
+				var link, lvl, amount,
+					parser	= new DOMParser(),
+					doc 	= parser.parseFromString(xhr.responseText, "text/html"),
+					human	= doc.querySelectorAll('.rsd li'),
+					tl		= human.length,
+					time_	= 0;
+				for (var i = 0; i < tl; i++) {
+					link	= human[i].querySelector('a'),
+					lvl		= human[i].querySelector('.abstr'),
+					amount	= human[i].querySelector('.amount');
+					if (link && parseInt(lvl.innerText) < 9 && !amount) {
+						time_ = rand_time()+time_;
+						console.log(link, parseInt(lvl.innerText));
+						AddTable('<div class="rsd">'+human[i].innerHTML+'</div>');
+						!function(t,l) {
+							setTimeout(function(){
+								evict(l);
+							},t);
+						}(time_, link.getAttribute('href'));
+					}
+				}
+				humansFN();
+			}
+			xhr.onerror = function() {
+				console.log(xhr);
+			};
+			xhr.send();
+		}, rand_time(180,300));// Раз в 3-5 минут
+	}());
+}
+/* Функция выселения */
+function evict(url) {
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onload = function() {
+			var parser	= new DOMParser(),
+				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
+				name	= doc.querySelector('.wrk strong.stat'),
+				link	= doc.querySelector('a.btnr').getAttribute('href');
+			end_xhr(link, name.innerText+' выселен(а)', rand_time(), url);
+		}
+		xhr.onerror = function() {
+			console.log(xhr);
+		};
+		xhr.send();
+	}, rand_time());
 }
 
 
