@@ -27,6 +27,8 @@ console.log('НебоБот Запущен '+BOT.version);
  * time - вреия ожидания перед действие
  * ref - реферал, если разрешено в браузере
  *
+ * TODO переписать функцию: заменить аргументы на объект и добавить передачу CLASS в AddTable
+ *
  */
 function end_xhr(url, text, time, ref, callback) {
 	setTimeout(function(){
@@ -63,52 +65,48 @@ function rand_time(min, max) {
 }
 
 
+
 /* Лифтер */
-if (/nebo.mobi\/lift/.exec(window.location)) {
-	(function liftFN() {
-		setTimeout(function(){
-
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', 'http://nebo.mobi/lift', true);
-			// Раскомментировать строчку, если разрешены рефералы в браузере,
-			// немного повышает защиту бота
-			// xhr.setRequestHeader('Referer', 'http://nebo.mobi/lift');
-
-			xhr.onload = function() {
-					var parser = new DOMParser(),
-						doc = parser.parseFromString(xhr.responseText, "text/html"),
-						lift = doc.getElementsByClassName('lift')[0],
-						ttime;
-
-					if (lift && lift.getElementsByClassName('tdu')[0]) {
-						end_xhr(
-							lift.getElementsByClassName('tdu')[0].href ||
-							'http://nebo.mobi/'+lift.getElementsByClassName('tdu')[0].getAttribute('href'),
-							lift.innerHTML.replace('<div class="clb"></div>',''),
-							rand_time(1,3),
-							'http://nebo.mobi/lift',
-							liftFN
-						);
-					} else {
-						ttime = getTime(doc.querySelector('[id^=time]').innerHTML);
-						AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
-						AddMessTable('Ждем посетителя!','',
-									function(){timer(ttime, document.getElementById('log_table_2'), false)});
-						setTimeout(function(){
-							AddMessTable('Развозим дальше','');
-							liftFN();
-						}, getSecond(ttime)*1000);
-					}
-
-			};
-			xhr.onerror = function() {
-				console.log(xhr);
-			};
-			xhr.send();
-
-		}, rand_time(3,6));
-	}());
+function liftFN() {
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://nebo.mobi/lift', true);
+		// Раскомментировать строчку, если разрешены рефералы в браузере,
+		// немного повышает защиту бота
+		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/lift');
+		xhr.onload = function() {
+			var parser = new DOMParser(),
+				doc = parser.parseFromString(xhr.responseText, "text/html"),
+				lift = doc.getElementsByClassName('lift')[0],
+				ttime;
+			if (lift && lift.getElementsByClassName('tdu')[0]) {
+				end_xhr(
+					lift.getElementsByClassName('tdu')[0].href ||
+					'http://nebo.mobi/'+lift.getElementsByClassName('tdu')[0].getAttribute('href'),
+					lift.innerHTML.replace('<div class="clb"></div>',''),
+					rand_time(1,3),
+					'http://nebo.mobi/lift',
+					liftFN
+				);
+			} else {
+				ttime = getTime(doc.querySelector('[id^=time]').innerHTML);
+				AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
+				AddMessTable('Ждем посетителя!','',
+							function(){timer(ttime, document.getElementById('log_table_2'), false)});
+				setTimeout(function(){
+					AddMessTable('Развозим дальше','');
+					liftFN();
+				}, getSecond(ttime)*1000);
+			}
+		};
+		xhr.onerror = function() {
+			console.log(xhr);
+		};
+		xhr.send();
+	}, rand_time(3,6));
 }
+
+
 
 /* Закупаем товар */
 if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
@@ -156,7 +154,6 @@ if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
 
 	}, 30000);
 }
-
 /* Функция закупки */
 function productAction(text,ref){
 
@@ -255,44 +252,42 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 }
 
 
-/* Выселение людей */
-if (/nebo.mobi\/humans/.exec(window.location)) {
-	(function humansFN() {
-		setTimeout(function(){
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', 'http://nebo.mobi/humans', true);
-			xhr.onload = function() {
-				var link, lvl, amount,
-					parser	= new DOMParser(),
-					doc 	= parser.parseFromString(xhr.responseText, "text/html"),
-					human	= doc.querySelectorAll('.rsd li'),
-					tl		= human.length,
-					time_	= 0;
-				for (var i = 0; i < tl; i++) {
-					link	= human[i].querySelector('a'),
-					lvl		= human[i].querySelector('.abstr'),
-					amount	= human[i].querySelector('.amount');
-					if (link && parseInt(lvl.innerText) < 9 && !amount) {
-						time_ = rand_time()+time_;
-						console.log(link, parseInt(lvl.innerText));
-						AddTable('<div class="rsd">'+human[i].innerHTML+'</div>');
-						!function(t,l) {
-							setTimeout(function(){
-								evict(l);
-							},t);
-						}(time_, link.getAttribute('href'));
-					}
+/* Выселение жителей */
+function humansFN() {
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://nebo.mobi/humans', true);
+		xhr.onload = function() {
+			var link, lvl, amount,
+				parser	= new DOMParser(),
+				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
+				human	= doc.querySelectorAll('.rsd li'),
+				tl		= human.length,
+				time_	= 0;
+			for (var i = 0; i < tl; i++) {
+				link	= human[i].querySelector('a'),
+				lvl		= human[i].querySelector('.abstr'),
+				amount	= human[i].querySelector('.amount');
+				if (link && parseInt(lvl.innerText) < 9 && !amount) {
+					time_ = rand_time()+time_;
+					console.log(link, parseInt(lvl.innerText));
+					AddTable('<div class="rsd">'+human[i].innerHTML+'</div>');
+					!function(t,l) {
+						setTimeout(function(){
+							evict(l);
+						},t);
+					}(time_, link.getAttribute('href'));
 				}
-				humansFN();
 			}
-			xhr.onerror = function() {
-				console.log(xhr);
-			};
-			xhr.send();
-		}, rand_time(180,300));// Раз в 3-5 минут
-	}());
+		};
+		xhr.onerror = function() {
+			console.log(xhr);
+		};
+		xhr.send();
+		humansFN();
+	}, rand_time(180,300));// Раз в 3-5 минут
 }
-/* Функция выселения */
+/* Функция выселения выбранного жителя */
 function evict(url) {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
@@ -303,7 +298,7 @@ function evict(url) {
 				name	= doc.querySelector('.wrk strong.stat'),
 				link	= doc.querySelector('a.btnr').getAttribute('href');
 			end_xhr(link, name.innerText+' выселен(а)', rand_time(), url);
-		}
+		};
 		xhr.onerror = function() {
 			console.log(xhr);
 		};
@@ -314,11 +309,11 @@ function evict(url) {
 
 
 /* Функция добавления в "логи" */
-function AddTable(e){
+function AddTable(e,c){
 	var d = new Date();
 	var t = addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds());
 	document.getElementById('lift_table').insertAdjacentHTML('afterbegin',
-		'<tr><td>'+t+'</td><td>'+e+'</td></tr>');
+		'<tr><td>'+t+'</td><td class="'+(c||'')+'">'+e+'</td></tr>');
 }
 function AddMessTable(f,s,callback){
 	document.getElementById('log_table_1').innerHTML = f;
@@ -429,6 +424,14 @@ window.onload = function() {
 									 + '</td></tr></table>');
 
 	AddMessTable('Небобот запущен', BOT.version);
+
+	if (/nebo.mobi\/lift/.exec(window.location)) {
+		liftFN();
+		AddTable('Лифтёр скоро приступит к работе.','rc');
+	} else if (/nebo.mobi\/humans/.exec(window.location)) {
+		humansFN();
+		AddTable('Скоро начнётся выселение.','rc');
+	}
 
 	/* Таймеры */
     var time = document.querySelectorAll('[id^=time]');
