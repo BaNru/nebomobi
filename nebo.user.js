@@ -2,7 +2,7 @@
 // @name        Небоскреб
 // @namespace   Игры
 // @include     http://nebo.mobi/*
-// @version     1.04
+// @version     1.05
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.04';
+BOT.version = '1.05';
 
 console.log('НебоБот Запущен '+BOT.version);
 
@@ -253,6 +253,7 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 
 
 /* Выселение жителей */
+// TODO не всегда выселяет с первого раза, когда-нибудь найти ошибку и исправить
 function humansFN() {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
@@ -480,7 +481,16 @@ window.onload = function() {
 
 	/* Очищаем раз в час */
 	setInterval(function() {
-		document.getElementById('lift_table').innerHTML = '';
+		var els = document.querySelectorAll('#lift_table tr'),
+			ell = els.length,
+			lt  = document.getElementById('lift_table');
+		lt.innerHTML = '';
+		for (var i = 0; i < ell; i++) {
+			lt.insertAdjacentHTML("beforeEnd",els[i].innerHTML);
+			if (i > 3) {
+				break;
+			}
+		}
 		AddTable('Логи очищены!');
 	}, 3600000);
 }
