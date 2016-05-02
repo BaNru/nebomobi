@@ -307,6 +307,31 @@ function evict(url) {
 }
 
 
+/* Задания */
+function quests(){
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://nebo.mobi/quests', true);
+		xhr.onload = function() {
+			var parser	= new DOMParser(),
+				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
+				link	= doc.querySelectorAll('.nfl .btng'),
+				tl		= link.length,
+				time_	= 0;
+			for (var i = 0; i < tl; i++) {
+				time_ 	= rand_time()+time_;
+				//TODO не забыть: когда изменю nd_xhr - убрать тут и в других местах оборачивающий DIV
+				end_xhr('http://nebo.mobi/'+link[i].getAttribute('href'), '<div class="nfl">'+link[i].closest('.nfl').innerHTML+'</div>', time_, 'http://nebo.mobi/quests');
+			}
+		};
+		xhr.onerror = function() {
+			console.log(xhr);
+		};
+		xhr.send();
+		quests();
+	}, rand_time(180,300));// Раз в 3-5 минут
+}
+
 
 /* Функция добавления в "логи" */
 function AddTable(e,c){
@@ -431,6 +456,9 @@ window.onload = function() {
 	} else if (/nebo.mobi\/humans/.exec(window.location)) {
 		humansFN();
 		AddTable('Скоро начнётся выселение.','rc');
+	} else if (/nebo.mobi\/quests/.exec(window.location)) {
+		quests();
+		AddTable('Задания скоро начнут собираться.','rc');
 	}
 
 	/* Таймеры */
