@@ -16,6 +16,10 @@ console.log('НебоБот Запущен '+BOT.version);
 
 /* Функции */
 
+function debuglog(){
+	// console.log(arguments);
+}
+
 /**
  *
  * end_xhr
@@ -39,10 +43,10 @@ function end_xhr(url, text, time, ref, callback) {
 		// xhr2.setRequestHeader('Referer', ref);
 		xhr.onload = function() {
 			AddTable(text);
-			console.log(url, xhr.responseURL);
+			debuglog(url, xhr.responseURL);
 		};
 		xhr.onerror = function() {
-			console.log(xhr);
+			debuglog(xhr);
 		};
 		xhr.send();
 		if(callback)callback();
@@ -100,7 +104,7 @@ function liftFN() {
 			}
 		};
 		xhr.onerror = function() {
-			console.log(xhr);
+			debuglog(xhr);
 		};
 		xhr.send();
 	}, rand_time(3,6));
@@ -136,7 +140,7 @@ if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
 							productAction(xhr2.responseText, xhr2.responseURL)
 						};
 						xhr2.onerror = function() {
-							console.log(xhr2);
+							debuglog(xhr2);
 						};
 						xhr2.send();
 					};
@@ -148,7 +152,7 @@ if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
 			}, 3000);
 		};
 		xhr.onerror = function() {
-			console.log(xhr);
+			debuglog(xhr);
 		};
 		xhr.send();
 
@@ -209,7 +213,7 @@ if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
 			}, 3000);
 		};
 		xhr.onerror = function() {
-			console.log(xhr);
+			debuglog(xhr);
 		};
 		xhr.send();
 	}, 30000);
@@ -245,7 +249,7 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 			}, 3000);
 		};
 		xhr.onerror = function() {
-			console.log(xhr);
+			debuglog(xhr);
 		};
 		xhr.send();
 	}, 30000);
@@ -271,7 +275,7 @@ function humansFN() {
 				amount	= human[i].querySelector('.amount');
 				if (link && parseInt(lvl.innerText) < 9 && !amount) {
 					time_ = rand_time()+time_;
-					console.log(link, parseInt(lvl.innerText));
+					debuglog(link, parseInt(lvl.innerText));
 					AddTable('<div class="rsd">'+human[i].innerHTML+'</div>');
 					!function(t,l) {
 						setTimeout(function(){
@@ -282,7 +286,7 @@ function humansFN() {
 			}
 		};
 		xhr.onerror = function() {
-			console.log(xhr);
+			debuglog(xhr);
 		};
 		xhr.send();
 		humansFN();
@@ -301,7 +305,7 @@ function evict(url) {
 			end_xhr(link, name.innerText+' выселен(а)', rand_time(), url);
 		};
 		xhr.onerror = function() {
-			console.log(xhr);
+			debuglog(xhr);
 		};
 		xhr.send();
 	}, rand_time());
@@ -326,7 +330,7 @@ function quests(){
 			}
 		};
 		xhr.onerror = function() {
-			console.log(xhr);
+			debuglog(xhr);
 		};
 		xhr.send();
 		quests();
