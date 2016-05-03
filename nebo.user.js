@@ -496,5 +496,6 @@ window.onload = function() {
 			}
 		}
 		AddTable('Логи очищены!');
+		console.clear();
 	}, 3600000);
 }
