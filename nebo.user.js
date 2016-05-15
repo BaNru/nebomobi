@@ -105,6 +105,11 @@ function liftFN() {
 		};
 		xhr.onerror = function() {
 			debuglog(xhr);
+			AddTable('Лифт сломался, но не отчаивайся - мастера уже на месте!');
+			AddMessTable('Ошибка! Перезапуск через','',function(){timer([0, 0, 0, 10], document.getElementById('log_table_2'), false)});
+			setTimeout(function(){
+				liftFN();
+			}, 10000);
 		};
 		xhr.send();
 	}, rand_time(3,6));
