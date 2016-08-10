@@ -440,7 +440,16 @@ function timer(time, id, notice) {
 }
 
 
-window.onload = function() {
+
+/*
+ * Если скрипт не запускается, то необходимо
+ * раскомментировать (удалить в начале строки //)
+ * и закомментировать (добавить в начале строки // или удалить строку)
+ * строки ниже и в самом конце файла.
+*/
+//document.addEventListener("DOMContentLoaded", function(){	// Раскомментировать 1 из 2
+window.onload = function() {								// Закомментировать  1 из 2
+	var chM;
 
 	/* Создаём таблицу логов */
 	document.body.insertAdjacentHTML('beforeend',
@@ -503,4 +512,5 @@ window.onload = function() {
 		AddTable('Логи очищены!');
 		console.clear();
 	}, 3600000);
-}
+}		// Закомментировать  2 из 2
+//})	// Раскомментировать 2 из 2
