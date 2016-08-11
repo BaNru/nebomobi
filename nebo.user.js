@@ -118,9 +118,8 @@ function liftFN() {
 
 
 /* Закупаем товар */
-if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
-	setInterval(function() {
-
+function productBuy() {
+	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
 	    xhr.open('GET', 'http://nebo.mobi/floors/0/2', true);
 		// Раскомментировать строчку, если разрешены рефералы в браузере,
@@ -155,13 +154,19 @@ if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
 					clearInterval(interval);
 				}
 			}, 3000);
+			productBuy();
 		};
 		xhr.onerror = function() {
 			debuglog(xhr);
+			AddTable('Закупка не получилась!');
+			AddMessTable('Ошибка! Перезапуск через','',function(){timer([0, 0, 0, 10], document.getElementById('log_table_2'), false)});
+			setTimeout(function(){
+				productBuy();
+			}, 10000);
 		};
 		xhr.send();
 
-	}, 30000);
+	}, rand_time(25,30));
 }
 /* Функция закупки */
 function productAction(text,ref){
@@ -192,8 +197,8 @@ function productAction(text,ref){
 
 
 /* Сбор выручки */
-if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
-	setInterval(function() {
+function collectRevenue() {
+	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', 'http://nebo.mobi/floors/0/5', true);
 		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/5');
@@ -216,20 +221,25 @@ if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
 					clearInterval(interval);
 				}
 			}, 3000);
+			collectRevenue();
 		};
 		xhr.onerror = function() {
 			debuglog(xhr);
+			AddTable('Сбор выручки не получился!');
+			AddMessTable('Ошибка! Перезапуск через','',function(){timer([0, 0, 0, 10], document.getElementById('log_table_2'), false)});
+			setTimeout(function(){
+				collectRevenue();
+			}, 10000);
 		};
 		xhr.send();
-	}, 30000);
+	}, rand_time(25,30));
 }
 
 
 
 /* Выложить товар */
-if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
-	setInterval(function() {
-
+function putProduct() {
+	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', 'http://nebo.mobi/floors/0/3', true);
 		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/3');
@@ -252,13 +262,20 @@ if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
 					clearInterval(interval);
 				}
 			}, 3000);
+			putProduct();
 		};
 		xhr.onerror = function() {
 			debuglog(xhr);
+			AddTable('Выложить товар не получилось!');
+			AddMessTable('Ошибка! Перезапуск через','',function(){timer([0, 0, 0, 10], document.getElementById('log_table_2'), false)});
+			setTimeout(function(){
+				putProduct();
+			}, 10000);
 		};
 		xhr.send();
-	}, 30000);
+	}, rand_time(25,30));
 }
+
 
 
 /* Выселение жителей */
@@ -414,6 +431,7 @@ function timer(time, id, notice) {
                      + addZero(minutes) + ":" + addZero(seconds);
         if(days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0){
 			clearInterval(int_);
+			if(callback)callback();
 			if (notice) {
 				tpmcl = id.closest('.flbdy') || false;
 				if(tpmcl){
@@ -437,6 +455,38 @@ function timer(time, id, notice) {
 			}
         }
     }, 1000);
+}
+
+
+
+/*
+ * Проверка на менеджера
+ *
+ * @param {Function} callback
+ *
+*/
+function checkingManager(callback) {
+	var els = document.querySelectorAll('.tdn .buff'),
+		l = els.length,
+		chM;
+    for (var i = 0; i < l; i++) {
+		if(/Менеджер*/.exec(els[i].innerText)){
+			chM = els[i].querySelector('span').innerText;
+			AddMessTable(
+				'Работает менеджер', chM,
+				function(){
+					timer(
+						getTime(chM.trim()),
+						document.getElementById('log_table_2'),
+						false,
+						callback
+					);
+				}
+			);
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -478,6 +528,21 @@ window.onload = function() {								// Закомментировать  1 из 
 	} else if (/nebo.mobi\/quests/.exec(window.location)) {
 		quests();
 		AddTable('Задания скоро начнут собираться.','rc');
+	} else if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
+		if(!checkingManager(productBuy)){
+			productBuy();
+		}
+		AddTable('Закупки скоро начнутся.','rc');
+	} else if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
+		if(!checkingManager(collectRevenue)){
+			collectRevenue();
+		}
+		AddTable('Раскладывание товара уже скоро.','rc');
+	} else if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
+		if(!checkingManager(putProduct)){
+			putProduct();
+		}
+		AddTable('Сбор выручки скоро начнётся.','rc');
 	}
 
 	/* Таймеры */
