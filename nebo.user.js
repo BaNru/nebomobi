@@ -2,7 +2,7 @@
 // @name        Небоскреб
 // @namespace   Игры
 // @include     http://nebo.mobi/*
-// @version     1.05
+// @version     1.6
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.05';
+BOT.version = '1.6';
 
 console.log('НебоБот Запущен '+BOT.version);
 
@@ -26,10 +26,11 @@ function debuglog(){
  *
  * Последний запрос - выполнение действия и вывод ответа на экран
  *
- * url - страница действия
- * text - сообщение для вывода на экран
- * time - вреия ожидания перед действие
- * ref - реферал, если разрешено в браузере
+ * @param {string} url - страница действия
+ * @param {string} text - сообщение для вывода на экран
+ * @param {string} time - вреия ожидания перед действие
+ * @param {string} ref - реферал, если разрешено в браузере
+ * @param {function} callback function, необязательный параметр
  *
  * TODO переписать функцию: заменить аргументы на объект и добавить передачу CLASS в AddTable
  *
@@ -59,7 +60,9 @@ function end_xhr(url, text, time, ref, callback) {
  * Случайное время
  *
  * По умолчанию возвращает от 2000 до 5000 (мс);
- * min и max задавать в секундах
+ * Задавать в секундах
+ * @param {number} min
+ * @param {number} max
  *
  */
 function rand_time(min, max) {
@@ -375,7 +378,12 @@ function AddMessTable(f,s,callback){
 
 
 /*
- * Функция извлечения времени
+ *
+ * Функция извлечения времени из строки
+ *
+ * @param {String} t - время со страницы формата "39 ч 59 мин"
+ * @returns {Array} [days, hours, minutes, seconds]
+ *
  */
 function getTime(t) {
 	var d = 0, h = 0, m = 0, s = 0,
@@ -397,6 +405,14 @@ function getTime(t) {
 	}
 	return [d, h, m, s];
 }
+/*
+ *
+ * Функция получения секунд из массива времени getTime()
+ *
+ * @param {Array} [days, hours, minutes, seconds]
+ * @returns {Number}
+ *
+*/
 function getSecond(t) {
 	return (((t[0]*24+t[1])*60)+t[2])*60+t[3];
 }
@@ -408,14 +424,32 @@ function firstMess(e) {
 		body : "Перезагрузите страницу!",
 		icon : "http://static.nebo.mobi/images/icons/home.png"
 	});
-};
-
+}
+/*
+ *
+ * Функция добавления ведущео нуля у элемента времени,
+ * если требуется
+ *
+ * @param {Number}
+ * @returns {Number}
+ *
+*/
 function addZero(int_) {
 	if ((int_+"").length == 1){int_ = "0"+int_}
 	return int_;
 }
 
-function timer(time, id, notice) {
+/*
+ * Функция создания таймера на месте времени,
+ * с последующим уведомлением
+ *
+ * @param {String} time - время
+ * @param {String} id - элемент
+ * @param {String} notice - текст уведомления
+ * @param {Function} callback функция, необязательный параметр
+ *
+ */
+function timer(time, id, notice, callback) {
 	var seconds_left = getSecond(time);
 	var int_ = setInterval(function () {
 		var seconds_left_d, seconds_left_h,
