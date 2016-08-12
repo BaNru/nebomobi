@@ -372,6 +372,47 @@ function quests(){
 }
 
 
+
+/* Изменение приоритета заданий города */
+function questsCitySelectChange(){
+
+	var thisInput = this,
+		thisInputValue = this.value,
+		thisText = thisInput.parentNode.textContent,
+		setting = JSON.parse(localStorage.getItem('setting_bot_quests')) || {},
+		inputD = document.querySelector('div.nfl > div:nth-child(1) > strong input[value="'+thisInputValue+'"]');
+
+	// Удаялем/обнуляем другие значения с таким же приоритетом
+	if(thisInputValue > 0 && inputD){
+		inputD.value = 0;
+		inputD.setAttribute('value', 0);
+	}
+
+	// Удаляем текущее, чтобы записать новое
+	for(var cur in setting){
+		if(setting[cur] === thisText){
+			delete setting[cur];
+		}
+	}
+
+	// Устанавливаем value, чтобы сработал querySelector на удаление
+	thisInput.setAttribute('value', thisInputValue);
+	
+
+	// Пишем новое значение
+	if(thisInputValue.length > 0){
+		setting[thisInputValue] = thisText;
+	}
+
+	// Удаляем пустышки
+	delete setting[""];
+	delete setting[0];
+
+	// Пишем в localStorage
+	localStorage.setItem('setting_bot_quests', JSON.stringify(setting));
+}
+
+
 /* Функция добавления в "логи" */
 function AddTable(e,c){
 	var d = new Date();
@@ -544,16 +585,19 @@ function checkingManager(callback) {
 */
 //document.addEventListener("DOMContentLoaded", function(){	// Раскомментировать 1 из 2
 window.onload = function() {								// Закомментировать  1 из 2
-	var chM;
 
 	/* Создаём таблицу логов */
 	document.body.insertAdjacentHTML('beforeend',
-									  '<style>#lift_table td > img {float:left}'
-									 +'#lift_table,#log_table{left:10px;position:fixed;width:calc(50% - 320px)}'
-									 +'#log_table{top:0;}'
-									 +'#lift_table{top:28px;}'
-									 +'#lift_table td > .ctrl {display:block}'
-									 +'#lift_table td{border-bottom: 1px dotted #275587}</style>'
+									  '<style>'
+										+'#lift_table td > img {float:left}'
+										+'#lift_table,#log_table{left:10px;position:fixed;width:calc(50% - 320px)}'
+										+'#log_table{top:0;}'
+										+'#lift_table{top:28px;}'
+										+'#lift_table td > .ctrl {display:block}'
+										+'#lift_table td{border-bottom: 1px dotted #275587}'
+										+'.input_bot_quests{float: right;width:2em;text-align:center;margin-left:-2em;}'
+										+'.input_bot_quests[value="0"]{color: red;font-weight: 800;}'
+									 +'</style>'
 									 +'<table id="log_table" class="hdr"><tr><td id="log_table_1">&nbsp;</td>'
 									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
 									 +'<table id="lift_table"><tr><td colspan="2">'
@@ -573,6 +617,9 @@ window.onload = function() {								// Закомментировать  1 из 
 	} else if (/nebo.mobi\/quests/.exec(window.location)) {
 		quests();
 		AddTable('Задания скоро начнут собираться.','rc');
+	} else if (/nebo.mobi\/city\/quests*/.exec(window.location)) {
+		questsCitySelect();
+		AddTable('Задания города скоро начнут собираться.','rc');
 	} else if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
 		if(!checkingManager(productBuy)){
 			productBuy();
