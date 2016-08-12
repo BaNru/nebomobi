@@ -98,8 +98,9 @@ function liftFN() {
 			} else {
 				ttime = getTime(doc.querySelector('[id^=time]').innerHTML);
 				AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
-				AddMessTable('Ждем посетителя!','',
-							function(){timer(ttime, document.getElementById('log_table_2'), false)});
+				AddMessTable('Ждем посетителя!','',function(){
+					timer(ttime, document.getElementById('log_table_2'), false);
+				});
 				setTimeout(function(){
 					AddMessTable('Развозим дальше','');
 					liftFN();
@@ -109,7 +110,9 @@ function liftFN() {
 		xhr.onerror = function() {
 			debuglog(xhr);
 			AddTable('Лифт сломался, но не отчаивайся - мастера уже на месте!');
-			AddMessTable('Ошибка! Перезапуск через','',function(){timer([0, 0, 0, 10], document.getElementById('log_table_2'), false)});
+			AddMessTable('Ошибка! Перезапуск через','',function(){
+				timer([0, 0, 0, 10], document.getElementById('log_table_2'), false);
+			});
 			setTimeout(function(){
 				liftFN();
 			}, 10000);
@@ -144,13 +147,13 @@ function productBuy() {
 						xhr2.open('GET', golink, true);
 						// xhr2.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/2');
 						xhr2.onload = function() {
-							productAction(xhr2.responseText, xhr2.responseURL)
+							productAction(xhr2.responseText, xhr2.responseURL);
 						};
 						xhr2.onerror = function() {
 							debuglog(xhr2);
 						};
 						xhr2.send();
-					};
+					}
 				}
 				i++;
 				if (i == l){
@@ -162,7 +165,9 @@ function productBuy() {
 		xhr.onerror = function() {
 			debuglog(xhr);
 			AddTable('Закупка не получилась!');
-			AddMessTable('Ошибка! Перезапуск через','',function(){timer([0, 0, 0, 10], document.getElementById('log_table_2'), false)});
+			AddMessTable('Ошибка! Перезапуск через','',function(){
+				timer([0, 0, 0, 10], document.getElementById('log_table_2'), false);
+			});
 			setTimeout(function(){
 				productBuy();
 			}, 10000);
@@ -186,7 +191,7 @@ function productAction(text,ref){
 			if (/wicket:interface=:\d+:floorPanel:product[A-Z]:emptyState:action:link::ILinkListener::/.exec(golink)) {
 				// TODO Сделать вывод закупаемого товара
 				// Сейчас выводится первый, если в магазине 1 товар на закупку
-				end_xhr(golink, prd.querySelectorAll('li')[i].innerHTML, 100, ref)
+				end_xhr(golink, prd.querySelectorAll('li')[i].innerHTML, 100, ref);
 			}
 		}
 		i++;
@@ -217,7 +222,7 @@ function collectRevenue() {
 					golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
 					if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
 						end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, 'http://nebo.mobi/floors/0/5');
-					};
+					}
 				}
 				i++;
 				if (i == l){
@@ -229,7 +234,9 @@ function collectRevenue() {
 		xhr.onerror = function() {
 			debuglog(xhr);
 			AddTable('Сбор выручки не получился!');
-			AddMessTable('Ошибка! Перезапуск через','',function(){timer([0, 0, 0, 10], document.getElementById('log_table_2'), false)});
+			AddMessTable('Ошибка! Перезапуск через','',function(){
+				timer([0, 0, 0, 10], document.getElementById('log_table_2'), false);
+			});
 			setTimeout(function(){
 				collectRevenue();
 			}, 10000);
@@ -258,7 +265,7 @@ function putProduct() {
 					golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
 					if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
 						end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, "http://nebo.mobi/floors/0/3");
-					};
+					}
 				}
 				i++;
 				if (i == l){
@@ -270,7 +277,9 @@ function putProduct() {
 		xhr.onerror = function() {
 			debuglog(xhr);
 			AddTable('Выложить товар не получилось!');
-			AddMessTable('Ошибка! Перезапуск через','',function(){timer([0, 0, 0, 10], document.getElementById('log_table_2'), false)});
+			AddMessTable('Ошибка! Перезапуск через','',function(){
+				timer([0, 0, 0, 10], document.getElementById('log_table_2'), false);
+			});
 			setTimeout(function(){
 				putProduct();
 			}, 10000);
@@ -435,7 +444,9 @@ function firstMess(e) {
  *
 */
 function addZero(int_) {
-	if ((int_+"").length == 1){int_ = "0"+int_}
+	if ((int_+"").length == 1){
+		int_ = "0"+int_;
+	}
 	return int_;
 }
 
@@ -611,5 +622,5 @@ window.onload = function() {								// Закомментировать  1 из 
 		AddTable('Логи очищены!');
 		console.clear();
 	}, 3600000);
-}		// Закомментировать  2 из 2
-//})	// Раскомментировать 2 из 2
+};		// Закомментировать  2 из 2
+//});	// Раскомментировать 2 из 2
