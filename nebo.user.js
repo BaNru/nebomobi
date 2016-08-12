@@ -60,9 +60,13 @@ function end_xhr(url, text, time, ref, callback) {
  * Случайное время
  *
  * По умолчанию возвращает от 2000 до 5000 (мс);
- * Задавать в секундах
- * @param {number} min
- * @param {number} max
+ * Задавать в секундах. Необязательные параметры
+ * @param {number} min secunds
+ * @param {number} max secunds
+ *
+ * @default min = 2s, max = 5s
+ *
+ * @returns {number} random millseconds
  *
  */
 function rand_time(min, max) {
@@ -480,7 +484,12 @@ function questsCitySelectChange(){
 }
 
 
-/* Функция добавления в "логи" */
+/*
+ * Функция добавления в "логи"
+ *
+ * @param {String} текст сообщения
+ * @param {String} class, необязательный параметр
+ */
 function AddTable(e,c){
 	var d = new Date();
 	var t = addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds());
@@ -617,6 +626,7 @@ function timer(time, id, notice, callback) {
  *
  * @param {Function} callback
  *
+ * @returns true or false
 */
 function checkingManager(callback) {
 	var els = document.querySelectorAll('.tdn .buff'),
