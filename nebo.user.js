@@ -398,19 +398,19 @@ function getTime(t) {
 	var d = 0, h = 0, m = 0, s = 0,
 		parsetime = t.split(/\s/);
 	if (parsetime[1] == 'д') {
-		var d = Math.round(parsetime[0]);
-		var h = Math.round(parsetime[2]);
+		d = Math.round(parsetime[0]);
+		h = Math.round(parsetime[2]);
 	}
 	if (parsetime[1] == 'ч') {
-		var h = Math.round(parsetime[0]);
-		var m = Math.round(parsetime[2]);
+		h = Math.round(parsetime[0]);
+		m = Math.round(parsetime[2]);
 	}
 	if (parsetime[1] == 'м') {
-		var m = Math.round(parsetime[0]);
-		var s = Math.round(parsetime[2]);
+		m = Math.round(parsetime[0]);
+		s = Math.round(parsetime[2]);
 	}
 	if (parsetime[1] == 'сек') {
-		var s = Math.round(parsetime[0]);
+		s = Math.round(parsetime[0]);
 	}
 	return [d, h, m, s];
 }
