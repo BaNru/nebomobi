@@ -373,6 +373,50 @@ function quests(){
 
 
 
+/* Задания города */
+function questsCity(){
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://nebo.mobi/city/quests/', true);
+		xhr.onload = function() {
+			var parser	= new DOMParser(),
+				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
+				link	= doc.querySelector('.nfl .btng[href*="myQuest:getAwarLink"');
+				stop	= false;
+
+			if(!link){
+				var setting = JSON.parse(localStorage.getItem('setting_bot_quests')) || {},
+					links = doc.querySelectorAll('.nfl .btng[href*="freeQuests"');
+
+				for(var cur in setting){
+					if(stop)break;
+					for (var i = 0, l = links.length; i < l; i++) {
+						if(setting[cur] === links[i].parentNode.parentNode.querySelector('div:nth-child(1) > strong').textContent){
+							link = links[i];
+							stop = true;
+							break;
+						}
+					}
+				}
+
+			}
+
+			if(stop && link){
+				end_xhr(
+					'http://nebo.mobi/'+link.getAttribute('href'),
+					'<div class="nfl">'+link.closest('.nfl').innerHTML+'</div>',
+					rand_time(),
+					'http://nebo.mobi/city/quests/'
+				);
+			}
+		};
+		xhr.onerror = function() {
+			debuglog(xhr);
+		};
+		xhr.send();
+		questsCity();
+	}, rand_time(180,300));// Раз в 3-5 минут
+}
 /* Выбор задания города (вывод инпутов) */
 function questsCitySelect(){
 	var elements = document.querySelectorAll('div.nfl > div:nth-child(1) > strong');
@@ -641,6 +685,7 @@ window.onload = function() {								// Закомментировать  1 из 
 		quests();
 		AddTable('Задания скоро начнут собираться.','rc');
 	} else if (/nebo.mobi\/city\/quests*/.exec(window.location)) {
+		questsCity();
 		questsCitySelect();
 		AddTable('Задания города скоро начнут собираться.','rc');
 	} else if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
