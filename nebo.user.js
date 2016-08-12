@@ -401,7 +401,7 @@ function questsCity(){
 
 			}
 
-			if(stop && link){
+			if(link){
 				end_xhr(
 					'http://nebo.mobi/'+link.getAttribute('href'),
 					'<div class="nfl">'+link.closest('.nfl').innerHTML+'</div>',
