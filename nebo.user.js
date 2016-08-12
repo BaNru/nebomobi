@@ -373,6 +373,29 @@ function quests(){
 
 
 
+/* Выбор задания города (вывод инпутов) */
+function questsCitySelect(){
+	var elements = document.querySelectorAll('div.nfl > div:nth-child(1) > strong');
+	var setting = JSON.parse(localStorage.getItem('setting_bot_quests')) || {};
+	for (var i = 0, l = elements.length, input; i < l; i++) {
+		input = document.createElement('input');
+		input.addEventListener('input', questsCitySelectChange);
+		input.className = 'input_bot_quests';
+		input.type="number";
+		input.size='2';
+		input.min = '0';
+		input.max = '19';
+		input.value = 0;
+		input.setAttribute('value', 0);
+		for(var cur in setting){
+			if (setting[cur] === elements[i].textContent){
+				input.value = cur;
+				input.setAttribute('value', cur);
+			}
+		}
+		elements[i].appendChild(input);
+	}
+}
 /* Изменение приоритета заданий города */
 function questsCitySelectChange(){
 
