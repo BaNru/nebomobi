@@ -2,7 +2,7 @@
 // @name        Небоскреб
 // @namespace   Игры
 // @include     http://nebo.mobi/*
-// @version     1.6
+// @version     1.7
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.6';
+BOT.version = '1.7';
 
 console.log('НебоБот Запущен '+BOT.version);
 
@@ -484,6 +484,78 @@ function questsCitySelectChange(){
 }
 
 
+
+/* Инвесторы */
+function boss(url,time){
+	// TODO Сделать ожидание дня
+	var day = (new Date()).getDay();
+	url = url || "http://nebo.mobi/boss/";
+	if(day == 6){
+		time = time || rand_time();
+	}
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url, true);
+		xhr.onload = function() {
+			console.log(xhr);
+			var parser	= new DOMParser(),
+				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
+				link	= doc.querySelector('.btng[href*="startCombatLink"]'),
+				time0	= doc.querySelector('.cntr > div > div.amount span'),
+				time1	= doc.querySelector('.m5 > .cntr.amount .hr + span'),
+				time2	= doc.querySelector('.cntr span[id^=time]');
+
+			// Инициируем запуск переговоров
+			if(link){
+				AddTable('<div class="nfl">'+link.closest('.m5').innerHTML+'</div>');
+				setTimeout(function(){
+					debuglog(link, link.innerHTML);
+					boss('http://nebo.mobi/'+link.getAttribute('href'));
+				},rand_time());
+			} else {
+
+				// Ожидание начала
+				link = doc.querySelector('.btng[href*="actionLink"]');
+				if(time0){
+					boss('http://nebo.mobi/'+link.getAttribute('href'),parseInt(time0.textContent)*1000);
+					AddTable('<div class="nfl">'+time0.closest('.cntr').innerHTML+'</div>');
+				}
+
+				// Перерыв
+				else if(time1){
+					boss('http://nebo.mobi/'+link.getAttribute('href'),getSecond(('0:'+time1.textContent).split(':'))*1000);
+					AddTable('<div class="nfl">'+time1.closest('.m5').innerHTML+'</div>');
+				}
+
+				// Переговоры уже идут
+				else if(time2){
+					boss('http://nebo.mobi/'+link.getAttribute('href'),parseInt(time2.textContent)*1000);
+					AddTable('<div class="nfl">'+time2.closest('.cntr').parentNode.innerHTML+'</div>');
+				}
+
+				// Скорее всего начало переговоров
+				else {
+					if(link){
+						AddTable('<div class="nfl">'+link.closest('.cntr').parentNode.innerHTML+'</div>');
+						boss('http://nebo.mobi/'+link.getAttribute('href'),500);
+					}
+					// Вероятно ошибка
+					else{
+						boss();
+					}
+				}
+			}
+		};
+		xhr.onerror = function() {
+			boss();
+			debuglog(xhr);
+		};
+		xhr.send();
+	}, time);
+}
+
+
+
 /*
  * Функция добавления в "логи"
  *
@@ -713,6 +785,9 @@ window.onload = function() {								// Закомментировать  1 из 
 			putProduct();
 		}
 		AddTable('Сбор выручки скоро начнётся.','rc');
+	} else if (/nebo.mobi\/boss*/.exec(window.location)) {
+		boss();
+		AddTable('Ожидаем инвесторов.','rc');
 	}
 
 	/* Таймеры */
