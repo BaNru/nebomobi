@@ -536,11 +536,11 @@ function getTime(t) {
  * Функция получения секунд из массива времени getTime()
  *
  * @param {Array} [days, hours, minutes, seconds]
- * @returns {Number}
+ * @returns {Number} seconds
  *
 */
 function getSecond(t) {
-	return (((t[0]*24+t[1])*60)+t[2])*60+t[3];
+	return (((parseInt(t[0])*24+parseInt(t[1]))*60)+parseInt(t[2]))*60+parseInt(t[3]);
 }
 
 function firstMess(e) {
