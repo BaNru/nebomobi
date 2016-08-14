@@ -645,7 +645,7 @@ function getSecond(t) {
 
 function firstMess(e) {
 	if( e != "granted" ) return false;
-	var notify = new Notification("Уведомления и таймер включены.", {
+	new Notification("Уведомления и таймер включены.", {
 		tag : "nebo.mobi",
 		body : "Перезагрузите страницу!",
 		icon : "http://static.nebo.mobi/images/icons/home.png"
@@ -709,7 +709,7 @@ function timer(time, id, notice, callback) {
 					notifyD.body = 'Какой-то таймер завершился';
 					notifyD.icon = 'http://igrotop.mobi/images/game7.png';
 				}
-				var notify = new Notification(notifyD.name, {
+				new Notification(notifyD.name, {
 					tag : "nebo.mobi",
 					body : notifyD.body,
 					icon : notifyD.icon
