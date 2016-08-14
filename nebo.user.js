@@ -385,7 +385,8 @@ function questsCity(){
 		xhr.onload = function() {
 			var parser	= new DOMParser(),
 				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
-				link	= doc.querySelector('.nfl .btng[href*="myQuest:getAwarLink"');
+				link	= doc.querySelector('.nfl .btng[href*="myQuest:getAwarLink"') ||
+						  doc.querySelector('.nfl .btnr[href*="myQuest:getAwarLink"'),
 				stop	= false;
 
 			if(!link){
