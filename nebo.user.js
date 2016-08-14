@@ -389,9 +389,17 @@ function questsCity(){
 						  doc.querySelector('.nfl .btnr[href*="myQuest:getAwarLink"'),
 				stop	= false;
 
+			// Если нет ссылок сбора
 			if(!link){
 				var setting = JSON.parse(localStorage.getItem('setting_bot_quests')) || {},
+					easyMoney = localStorage.getItem('easyMoney'),
+					hour = (new Date).getHours(),
 					links = doc.querySelectorAll('.nfl .btng[href*="freeQuests"');
+
+				// Баксы в полночь
+				if(easyMoney && easyMoney && hour >= easyMoney){
+					setting[0] = 'Легкие деньги';
+				}
 
 				for(var cur in setting){
 					if(stop)break;
@@ -406,6 +414,7 @@ function questsCity(){
 
 			}
 
+			// Сбор задания или выбор нового
 			if(link){
 				end_xhr(
 					'http://nebo.mobi/'+link.getAttribute('href'),
@@ -424,8 +433,23 @@ function questsCity(){
 }
 /* Выбор задания города (вывод инпутов) */
 function questsCitySelect(){
-	var elements = document.querySelectorAll('div.nfl > div:nth-child(1) > strong');
-	var setting = JSON.parse(localStorage.getItem('setting_bot_quests')) || {};
+	var elements  = document.querySelectorAll('div.nfl > div:nth-child(1) > strong'),
+		setting   = JSON.parse(localStorage.getItem('setting_bot_quests')) || {},
+		easyMoney = localStorage.getItem('easyMoney'),
+		inputMoney;
+
+	// Поле для Легких денег
+	inputMoney = document.createElement('input');
+	inputMoney.className = 'easy_money';
+	inputMoney.type="number";
+	inputMoney.size='2';
+	inputMoney.min = '0';
+	inputMoney.max = '23';
+	inputMoney.value = easyMoney;
+	inputMoney.addEventListener('input', function(){
+		localStorage.setItem('easyMoney', parseInt(this.value));
+	});
+
 	for (var i = 0, l = elements.length, input; i < l; i++) {
 		input = document.createElement('input');
 		input.addEventListener('input', questsCitySelectChange);
@@ -440,6 +464,9 @@ function questsCitySelect(){
 			if (setting[cur] === elements[i].textContent){
 				input.value = cur;
 				input.setAttribute('value', cur);
+			}
+			if(elements[i].textContent === 'Легкие деньги'){
+				elements[i].appendChild(inputMoney);
 			}
 		}
 		elements[i].appendChild(input);
@@ -745,8 +772,9 @@ window.onload = function() {								// Закомментировать  1 из 
 										+'#lift_table{top:28px;}'
 										+'#lift_table td > .ctrl {display:block}'
 										+'#lift_table td{border-bottom: 1px dotted #275587}'
-										+'.input_bot_quests{float: right;width:2em;text-align:center;margin-left:-2em;}'
+										+'.input_bot_quests,.easy_money{float: right;width:2em;text-align:center;margin-left:-2em;}'
 										+'.input_bot_quests[value="0"]{color: red;font-weight: 800;}'
+										+'.easy_money{float:left;margin: 3px -2em 3px 0}'
 									 +'</style>'
 									 +'<table id="log_table" class="hdr"><tr><td id="log_table_1">&nbsp;</td>'
 									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
