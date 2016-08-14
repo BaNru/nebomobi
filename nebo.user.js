@@ -810,18 +810,20 @@ window.onload = function() {								// Закомментировать  1 из 
 
 	/* Очищаем раз в час */
 	setInterval(function() {
-		var els = document.querySelectorAll('#lift_table tr'),
-			ell = els.length,
-			lt  = document.getElementById('lift_table');
-		lt.innerHTML = '';
-		for (var i = 0; i < ell; i++) {
-			lt.insertAdjacentHTML("beforeEnd",els[i].innerHTML);
-			if (i > 3) {
-				break;
+		if(document.querySelectorAll('#lift_table tr td')[1].className !== 'clear_log'){
+			var els = document.querySelectorAll('#lift_table tr'),
+				ell = els.length,
+				lt  = document.getElementById('lift_table');
+				lt.innerHTML = '';
+			for (var i = 0; i < ell; i++) {
+				lt.insertAdjacentHTML("beforeEnd",els[i].innerHTML);
+				if (i > 3) {
+					break;
+				}
 			}
+			AddTable('Логи очищены!','clear_log');
+			console.clear();
 		}
-		AddTable('Логи очищены!');
-		console.clear();
 	}, 3600000);
 };		// Закомментировать  2 из 2
 //});	// Раскомментировать 2 из 2
