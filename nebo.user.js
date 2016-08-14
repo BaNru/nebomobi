@@ -392,7 +392,7 @@ function questsCity(){
 			// Если нет ссылок сбора
 			if(!link){
 				var setting = JSON.parse(localStorage.getItem('setting_bot_quests')) || {},
-					easyMoney = localStorage.getItem('easyMoney'),
+					easyMoney = localStorage.getItem('setting_bot_easy_money'),
 					hour = (new Date).getHours(),
 					links = doc.querySelectorAll('.nfl .btng[href*="freeQuests"');
 
@@ -435,7 +435,7 @@ function questsCity(){
 function questsCitySelect(){
 	var elements  = document.querySelectorAll('div.nfl > div:nth-child(1) > strong'),
 		setting   = JSON.parse(localStorage.getItem('setting_bot_quests')) || {},
-		easyMoney = localStorage.getItem('easyMoney'),
+		easyMoney = localStorage.getItem('setting_bot_easy_money'),
 		inputMoney;
 
 	// Поле для Легких денег
@@ -447,7 +447,7 @@ function questsCitySelect(){
 	inputMoney.max = '23';
 	inputMoney.value = easyMoney;
 	inputMoney.addEventListener('input', function(){
-		localStorage.setItem('easyMoney', parseInt(this.value));
+		localStorage.setItem('setting_bot_easy_money', parseInt(this.value));
 	});
 
 	for (var i = 0, l = elements.length, input; i < l; i++) {
