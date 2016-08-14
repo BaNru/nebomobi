@@ -513,7 +513,13 @@ function questsCitySelectChange(){
 
 
 
-/* Инвесторы */
+/*
+ * Инвесторы
+ *
+ * @param {String} url, необязательный параметр
+ * @param {Number} millseconds - время ожидания, необязательный параметр
+ *
+*/
 function boss(url,time){
 	// TODO Сделать ожидание дня
 	var day = (new Date()).getDay();
@@ -525,7 +531,6 @@ function boss(url,time){
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);
 		xhr.onload = function() {
-			console.log(xhr);
 			var parser	= new DOMParser(),
 				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
 				link	= doc.querySelector('.btng[href*="startCombatLink"]'),
