@@ -2,7 +2,7 @@
 // @name        Небоскреб
 // @namespace   Игры
 // @include     http://nebo.mobi/*
-// @version     1.7
+// @version     1.8
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.7';
+BOT.version = '1.8';
 
 console.log('НебоБот Запущен '+BOT.version);
 
@@ -908,7 +908,9 @@ window.onload = function() {								// Закомментировать  1 из 
 					break;
 				}
 			}
-			AddTable('Логи очищены!','clear_log');
+			if(ell > 4){
+				AddTable('Логи очищены!','clear_log');
+			}
 		}
 		console.clear();
 	}, 3600000);
