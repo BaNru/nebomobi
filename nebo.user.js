@@ -2,7 +2,7 @@
 // @name        Небоскреб
 // @namespace   Игры
 // @include     http://nebo.mobi/*
-// @version     1.8
+// @version     1.8.1
 // @description Бот для игры Небоскребы
 // @match       http://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.8';
+BOT.version = '1.8.1';
 
 console.log('НебоБот Запущен '+BOT.version);
 
@@ -397,7 +397,7 @@ function questsCity(){
 					links = doc.querySelectorAll('.nfl .btng[href*="freeQuests"');
 
 				// Баксы в полночь
-				if(easyMoney && easyMoney && hour >= easyMoney){
+				if(easyMoney && easyMoney >= 0 && hour >= easyMoney){
 					setting[0] = 'Легкие деньги';
 				}
 
