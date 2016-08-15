@@ -589,6 +589,55 @@ function boss(url,time){
 
 
 
+/* Задания вестибюля */
+function lobby(){
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', 'http://nebo.mobi/lobby', true);
+		xhr.onload = function() {
+			var parser	= new DOMParser(),
+				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
+				link	= doc.querySelector('.btng[href*="questPanel:getAwarLink"]') ||
+						  doc.querySelector('.btng[href*="questPanel:getQuest"]'),
+				thisText= doc.querySelector('.nfl .admin').textContent,
+				setting = JSON.parse(localStorage.getItem('setting_bot_lobby')) || {};
+
+			if(link && setting[thisText]){
+				end_xhr(
+					'http://nebo.mobi/'+link.getAttribute('href'),
+					'<div class="nfl">'+link.closest('.nfl').innerHTML+'</div>',
+					rand_time(),
+					'http://nebo.mobi/lobby'
+				);
+			}
+		};
+		xhr.onerror = function() {
+			debuglog(xhr);
+		};
+		xhr.send();
+		lobby();
+	}, rand_time(180,300));// Раз в 3-5 минут
+}
+/* Инпуты в вестибюле */
+function lobbySelect(){
+	var element  = document.querySelector('div.nfl:not(.m5)'),
+		setting  = JSON.parse(localStorage.getItem('setting_bot_lobby')) || {},
+		input    = document.createElement('input');
+
+	input.addEventListener('change', function(){
+		setting[element.querySelector('.admin').textContent] = this.checked;
+		localStorage.setItem('setting_bot_lobby', JSON.stringify(setting));
+	});
+	input.className = 'input_bot_check';
+	input.type="checkbox";
+	if (setting[element.querySelector('.admin').textContent]){
+		input.checked = true;
+	}
+	element.insertBefore(input, element.firstChild);
+}
+
+
+
 /*
  * Функция добавления в "логи"
  *
@@ -780,6 +829,7 @@ window.onload = function() {								// Закомментировать  1 из 
 										+'.input_bot_quests,.easy_money{float: right;width:2em;text-align:center;margin-left:-2em;}'
 										+'.input_bot_quests[value="0"]{color: red;font-weight: 800;}'
 										+'.easy_money{float:left;margin: 3px -2em 3px 0}'
+										+'.input_bot_check{float:left;margin-right:-100%;}'
 									 +'</style>'
 									 +'<table id="log_table" class="hdr"><tr><td id="log_table_1">&nbsp;</td>'
 									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
@@ -822,6 +872,10 @@ window.onload = function() {								// Закомментировать  1 из 
 	} else if (/nebo.mobi\/boss*/.exec(window.location)) {
 		boss();
 		AddTable('Ожидаем инвесторов.','rc');
+	} else if (/nebo.mobi\/lobby/.exec(window.location)) {
+		lobbySelect();
+		lobby();
+		AddTable('Ждём задания в вестибюле.','rc');
 	}
 
 	/* Таймеры */
