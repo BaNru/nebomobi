@@ -393,7 +393,7 @@ function questsCity(){
 			if(!link){
 				var setting = JSON.parse(localStorage.getItem('setting_bot_quests')) || {},
 					easyMoney = localStorage.getItem('setting_bot_easy_money'),
-					hour = (new Date).getHours(),
+					hour = (new Date).getUTCHours() + 3,
 					links = doc.querySelectorAll('.nfl .btng[href*="freeQuests"');
 
 				// Баксы в полночь
