@@ -11,6 +11,7 @@
 var BOT = {};
 BOT.version = '1.9.0';
 const DOMAIN = 'https://nebo.mobi/';
+const DOMAIN_NAME = 'nebo.mobi';
 
 console.log('НебоБот Запущен '+BOT.version);
 
@@ -700,9 +701,9 @@ function getSecond(t) {
 function firstMess(e) {
 	if( e != "granted" ) return false;
 	new Notification("Уведомления и таймер включены.", {
-		tag : "nebo.mobi",
+		tag : DOMAIN_NAME,
 		body : "Перезагрузите страницу!",
-		icon : "http://static.nebo.mobi/images/icons/home.png"
+		icon : "http://static."+DOMAIN_NAME+"/images/icons/home.png"
 	});
 }
 /*
@@ -764,7 +765,7 @@ function timer(time, id, notice, callback) {
 					notifyD.icon = 'http://igrotop.mobi/images/game7.png';
 				}
 				new Notification(notifyD.name, {
-					tag : "nebo.mobi",
+					tag : DOMAIN_NAME,
 					body : notifyD.body,
 					icon : notifyD.icon
 				});
@@ -841,38 +842,40 @@ window.onload = function() {								// Закомментировать  1 из 
 
 	AddMessTable('Небобот запущен', BOT.version);
 
-	if (/nebo.mobi\/lift/.exec(window.location)) {
+
+
+	if (/\/lift/.exec(window.location.pathname)) {
 		liftFN();
 		AddTable('Лифтёр скоро приступит к работе.','rc');
-	} else if (/nebo.mobi\/humans/.exec(window.location)) {
+	} else if (/\/humans/.exec(window.location.pathname)) {
 		humansFN();
 		AddTable('Скоро начнётся выселение.','rc');
-	} else if (/nebo.mobi\/quests/.exec(window.location)) {
+	} else if (/\/quests/.exec(window.location.pathname)) {
 		quests();
 		AddTable('Задания скоро начнут собираться.','rc');
-	} else if (/nebo.mobi\/city\/quests*/.exec(window.location)) {
+	} else if (/\/city\/quests*/.exec(window.location.pathname)) {
 		questsCity();
 		questsCitySelect();
 		AddTable('Задания города скоро начнут собираться.','rc');
-	} else if (/nebo.mobi\/floors\/0\/2/.exec(window.location)) {
+	} else if (/\/floors\/0\/2/.exec(window.location.pathname)) {
 		if(!checkingManager(productBuy)){
 			productBuy();
 		}
 		AddTable('Закупки скоро начнутся.','rc');
-	} else if (/nebo.mobi\/floors\/0\/3/.exec(window.location)) {
+	} else if (/\/floors\/0\/3/.exec(window.location.pathname)) {
 		if(!checkingManager(collectRevenue)){
 			collectRevenue();
 		}
 		AddTable('Раскладывание товара уже скоро.','rc');
-	} else if (/nebo.mobi\/floors\/0\/5/.exec(window.location)) {
+	} else if (/\/floors\/0\/5/.exec(window.location.pathname)) {
 		if(!checkingManager(putProduct)){
 			putProduct();
 		}
 		AddTable('Сбор выручки скоро начнётся.','rc');
-	} else if (/nebo.mobi\/boss*/.exec(window.location)) {
+	} else if (/\/boss*/.exec(window.location.pathname)) {
 		boss();
 		AddTable('Ожидаем инвесторов.','rc');
-	} else if (/nebo.mobi\/lobby/.exec(window.location)) {
+	} else if (/\/lobby/.exec(window.location.pathname)) {
 		lobbySelect();
 		lobby();
 		AddTable('Ждём задания в вестибюле.','rc');
