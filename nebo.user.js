@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name        Небоскреб
 // @namespace   Игры
-// @include     http://nebo.mobi/*
-// @version     1.8.1
+// @version     1.9.0
 // @description Бот для игры Небоскребы
-// @match       http://nebo.mobi/*
+// @match       https://nebo.mobi/*
 // @copyright   BaNru (2014-2016)
 // @author   	BaNru
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.8.1';
+BOT.version = '1.9.0';
+const DOMAIN = 'https://nebo.mobi/';
 
 console.log('НебоБот Запущен '+BOT.version);
 
@@ -81,10 +81,10 @@ function rand_time(min, max) {
 function liftFN() {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://nebo.mobi/lift', true);
+		xhr.open('GET', DOMAIN + 'lift', true);
 		// Раскомментировать строчку, если разрешены рефералы в браузере,
 		// немного повышает защиту бота
-		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/lift');
+		// xhr.setRequestHeader('Referer', DOMAIN + 'lift');
 		xhr.onload = function() {
 			var parser = new DOMParser(),
 				doc = parser.parseFromString(xhr.responseText, "text/html"),
@@ -93,10 +93,10 @@ function liftFN() {
 			if (lift && lift.getElementsByClassName('tdu')[0]) {
 				end_xhr(
 					lift.getElementsByClassName('tdu')[0].href ||
-					'http://nebo.mobi/'+lift.getElementsByClassName('tdu')[0].getAttribute('href'),
+					DOMAIN + lift.getElementsByClassName('tdu')[0].getAttribute('href'),
 					lift.innerHTML.replace('<div class="clb"></div>',''),
 					rand_time(1,3),
-					'http://nebo.mobi/lift',
+					DOMAIN + 'lift',
 					liftFN
 				);
 			} else {
@@ -131,10 +131,10 @@ function liftFN() {
 function productBuy() {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
-	    xhr.open('GET', 'http://nebo.mobi/floors/0/2', true);
+	    xhr.open('GET', DOMAIN + 'floors/0/2', true);
 		// Раскомментировать строчку, если разрешены рефералы в браузере,
 		// немного повышает защиту бота
-		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/2');
+		// xhr.setRequestHeader('Referer', DOMAIN + 'floors/0/2');
 
 		xhr.onload = function() {
 			var parser = new DOMParser();
@@ -145,11 +145,11 @@ function productBuy() {
 			var i = 0, golink = "";
 			var interval = setInterval(function(){
 				if (links[i]) {
-					golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+					golink = links[i].href || DOMAIN + links[i].getAttribute('href');
 					if (/nebo\.mobi\/(?:\.\.\/)*floor\//.exec(golink)) {
 						var xhr2 = new XMLHttpRequest();
 						xhr2.open('GET', golink, true);
-						// xhr2.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/2');
+						// xhr2.setRequestHeader('Referer', DOMAIN + 'floors/0/2');
 						xhr2.onload = function() {
 							productAction(xhr2.responseText, xhr2.responseURL);
 						};
@@ -191,7 +191,7 @@ function productAction(text,ref){
 	var i = 0, golink = "";
 	var intl = setInterval(function(){
 		if (links[i]) {
-			golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+			golink = links[i].href || DOMAIN + links[i].getAttribute('href');
 			if (/wicket:interface=:\d+:floorPanel:product[A-Z]:emptyState:action:link::ILinkListener::/.exec(golink)) {
 				// TODO Сделать вывод закупаемого товара
 				// Сейчас выводится первый, если в магазине 1 товар на закупку
@@ -212,8 +212,8 @@ function productAction(text,ref){
 function collectRevenue() {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://nebo.mobi/floors/0/5', true);
-		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/5');
+		xhr.open('GET', DOMAIN + 'floors/0/5', true);
+		// xhr.setRequestHeader('Referer', DOMAIN + 'floors/0/5');
 		xhr.onload = function() {
 			var parser = new DOMParser();
 			var doc = parser.parseFromString(xhr.responseText, "text/html");
@@ -223,9 +223,9 @@ function collectRevenue() {
 			var i = 0, golink = "";
 			var interval = setInterval(function(){
 				if (links[i]) {
-					golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+					golink = links[i].href || DOMAIN + links[i].getAttribute('href');
 					if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
-						end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, 'http://nebo.mobi/floors/0/5');
+						end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, DOMAIN + 'floors/0/5');
 					}
 				}
 				i++;
@@ -255,8 +255,8 @@ function collectRevenue() {
 function putProduct() {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://nebo.mobi/floors/0/3', true);
-		// xhr.setRequestHeader('Referer', 'http://nebo.mobi/floors/0/3');
+		xhr.open('GET', DOMAIN + 'floors/0/3', true);
+		// xhr.setRequestHeader('Referer', DOMAIN + 'floors/0/3');
 		xhr.onload = function() {
 			var parser = new DOMParser();
 			var doc = parser.parseFromString(xhr.responseText, "text/html");
@@ -266,9 +266,9 @@ function putProduct() {
 			var i = 0, golink = "";
 			var interval = setInterval(function(){
 				if (links[i]) {
-					golink = links[i].href || 'http://nebo.mobi/'+links[i].getAttribute('href');
+					golink = links[i].href || DOMAIN + links[i].getAttribute('href');
 					if (/wicket:interface=:\d+:floors:\d+:floorPanel:state:action::ILinkListener::/.exec(golink)) {
-						end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, "http://nebo.mobi/floors/0/3");
+						end_xhr(golink, tower.querySelectorAll('li')[i].innerHTML, 100, DOMAIN + "floors/0/3");
 					}
 				}
 				i++;
@@ -299,7 +299,7 @@ function putProduct() {
 function humansFN() {
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://nebo.mobi/humans', true);
+		xhr.open('GET', DOMAIN + 'humans', true);
 		xhr.onload = function() {
 			var link, lvl, amount,
 				parser	= new DOMParser(),
@@ -354,7 +354,7 @@ function evict(url) {
 function quests(){
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://nebo.mobi/quests', true);
+		xhr.open('GET', DOMAIN + 'quests', true);
 		xhr.onload = function() {
 			var parser	= new DOMParser(),
 				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
@@ -364,7 +364,7 @@ function quests(){
 			for (var i = 0; i < tl; i++) {
 				time_ 	= rand_time()+time_;
 				//TODO не забыть: когда изменю nd_xhr - убрать тут и в других местах оборачивающий DIV
-				end_xhr('http://nebo.mobi/'+link[i].getAttribute('href'), '<div class="nfl">'+link[i].closest('.nfl').innerHTML+'</div>', time_, 'http://nebo.mobi/quests');
+				end_xhr(DOMAIN + link[i].getAttribute('href'), '<div class="nfl">'+link[i].closest('.nfl').innerHTML+'</div>', time_, DOMAIN + 'quests');
 			}
 		};
 		xhr.onerror = function() {
@@ -381,7 +381,7 @@ function quests(){
 function questsCity(){
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://nebo.mobi/city/quests/', true);
+		xhr.open('GET', DOMAIN + 'city/quests/', true);
 		xhr.onload = function() {
 			var parser	= new DOMParser(),
 				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
@@ -393,7 +393,7 @@ function questsCity(){
 			if(!link){
 				var setting = JSON.parse(localStorage.getItem('setting_bot_quests')) || {},
 					easyMoney = localStorage.getItem('setting_bot_easy_money'),
-					hour = (new Date).getUTCHours() + 3,
+					hour = (new Date).getHours(),
 					links = doc.querySelectorAll('.nfl .btng[href*="freeQuests"');
 
 				// Баксы в полночь
@@ -417,10 +417,10 @@ function questsCity(){
 			// Сбор задания или выбор нового
 			if(link){
 				end_xhr(
-					'http://nebo.mobi/'+link.getAttribute('href'),
+					DOMAIN + link.getAttribute('href'),
 					'<div class="nfl">'+link.closest('.nfl').innerHTML+'</div>',
 					rand_time(),
-					'http://nebo.mobi/city/quests/'
+					DOMAIN + 'city/quests/'
 				);
 			}
 		};
@@ -496,7 +496,7 @@ function questsCitySelectChange(){
 
 	// Устанавливаем value, чтобы сработал querySelector на удаление
 	thisInput.setAttribute('value', thisInputValue);
-	
+
 
 	// Пишем новое значение
 	if(thisInputValue.length > 0){
@@ -523,7 +523,7 @@ function questsCitySelectChange(){
 function boss(url,time){
 	// TODO Сделать ожидание дня
 	var day = (new Date()).getDay();
-	url = url || "http://nebo.mobi/boss/";
+	url = url || DOMAIN + "boss/";
 	if(day == 6){
 		time = time || rand_time();
 	}
@@ -543,26 +543,26 @@ function boss(url,time){
 				AddTable('<div class="nfl">'+link.closest('.m5').innerHTML+'</div>');
 				setTimeout(function(){
 					debuglog(link, link.innerHTML);
-					boss('http://nebo.mobi/'+link.getAttribute('href'));
+					boss(DOMAIN + link.getAttribute('href'));
 				},rand_time());
 			} else {
 
 				// Ожидание начала
 				link = doc.querySelector('.btng[href*="actionLink"]');
 				if(time0){
-					boss('http://nebo.mobi/'+link.getAttribute('href'),parseInt(time0.textContent)*1000);
+					boss(DOMAIN + link.getAttribute('href'),parseInt(time0.textContent)*1000);
 					AddTable('<div class="nfl">'+time0.closest('.cntr').innerHTML+'</div>');
 				}
 
 				// Перерыв
 				else if(time1){
-					boss('http://nebo.mobi/'+link.getAttribute('href'),getSecond(('0:'+time1.textContent).split(':'))*1000);
+					boss(DOMAIN + link.getAttribute('href'),getSecond(('0:'+time1.textContent).split(':'))*1000);
 					AddTable('<div class="nfl">'+time1.closest('.m5').innerHTML+'</div>');
 				}
 
 				// Переговоры уже идут
 				else if(time2){
-					boss('http://nebo.mobi/'+link.getAttribute('href'),parseInt(time2.textContent)*1000);
+					boss(DOMAIN + link.getAttribute('href'),parseInt(time2.textContent)*1000);
 					AddTable('<div class="nfl">'+time2.closest('.cntr').parentNode.innerHTML+'</div>');
 				}
 
@@ -570,7 +570,7 @@ function boss(url,time){
 				else {
 					if(link){
 						AddTable('<div class="nfl">'+link.closest('.cntr').parentNode.innerHTML+'</div>');
-						boss('http://nebo.mobi/'+link.getAttribute('href'),500);
+						boss(DOMAIN + link.getAttribute('href'),500);
 					}
 					// Вероятно ошибка
 					else{
@@ -593,7 +593,7 @@ function boss(url,time){
 function lobby(){
 	setTimeout(function(){
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'http://nebo.mobi/lobby', true);
+		xhr.open('GET', DOMAIN + 'lobby', true);
 		xhr.onload = function() {
 			var parser	= new DOMParser(),
 				doc 	= parser.parseFromString(xhr.responseText, "text/html"),
@@ -604,10 +604,10 @@ function lobby(){
 
 			if(link && setting[thisText]){
 				end_xhr(
-					'http://nebo.mobi/'+link.getAttribute('href'),
+					DOMAIN + link.getAttribute('href'),
 					'<div class="nfl">'+link.closest('.nfl').innerHTML+'</div>',
 					rand_time(),
-					'http://nebo.mobi/lobby'
+					DOMAIN + 'lobby'
 				);
 			}
 		};
@@ -620,9 +620,9 @@ function lobby(){
 }
 /* Инпуты в вестибюле */
 function lobbySelect(){
-	var element  = document.querySelector('div.nfl:not(.m5)'),
-		setting  = JSON.parse(localStorage.getItem('setting_bot_lobby')) || {},
-		input    = document.createElement('input');
+	var element	= document.querySelector('div.nfl:not(.m5)'),
+		setting	= JSON.parse(localStorage.getItem('setting_bot_lobby')) || {},
+		input	= document.createElement('input');
 
 	input.addEventListener('change', function(){
 		setting[element.querySelector('.admin').textContent] = this.checked;
@@ -898,9 +898,9 @@ window.onload = function() {								// Закомментировать  1 из 
 	/* Очищаем раз в час */
 	setInterval(function() {
 		if(document.querySelectorAll('#lift_table tr td')[1].className !== 'clear_log'){
-			var els = document.querySelectorAll('#lift_table tr'),
-				ell = els.length,
-				lt  = document.getElementById('lift_table');
+			var els	= document.querySelectorAll('#lift_table tr'),
+				ell	= els.length,
+				lt	= document.getElementById('lift_table');
 				lt.innerHTML = '';
 			for (var i = 0; i < ell; i++) {
 				lt.insertAdjacentHTML("beforeEnd",els[i].innerHTML);
