@@ -4,7 +4,7 @@
 // @version     1.9.0
 // @description Бот для игры Небоскребы
 // @match       https://nebo.mobi/*
-// @copyright   BaNru (2014-2016)
+// @copyright   BaNru (2014-2024)
 // @author   	BaNru
 // ==/UserScript==
 
