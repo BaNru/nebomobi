@@ -648,7 +648,7 @@ function lobbySelect(){
 function AddTable(e,c){
 	var d = new Date();
 	var t = addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds());
-	document.getElementById('lift_table').insertAdjacentHTML('afterbegin',
+	document.getElementById('event_table').insertAdjacentHTML('afterbegin',
 		'<tr><td>'+t+'</td><td class="'+(c||'')+'">'+e+'</td></tr>');
 }
 function AddMessTable(f,s,callback){
@@ -821,12 +821,12 @@ window.onload = function() {								// Закомментировать  1 из 
 	/* Создаём таблицу логов */
 	document.body.insertAdjacentHTML('beforeend',
 									  '<style>'
-										+'#lift_table td > img {float:left}'
-										+'#lift_table,#log_table{left:10px;position:fixed;width:calc(50% - 320px)}'
+										+'#event_table td > img {float:left}'
+										+'#event_table,#log_table{left:10px;position:fixed;width:calc(50% - 320px)}'
 										+'#log_table{top:0;}'
-										+'#lift_table{top:28px;}'
-										+'#lift_table td > .ctrl {display:block}'
-										+'#lift_table td{border-bottom: 1px dotted #275587}'
+										+'#event_table{top:28px;}'
+										+'#event_table td > .ctrl {display:block}'
+										+'#event_table td{border-bottom: 1px dotted #275587}'
 										+'.input_bot_quests,.easy_money{float: right;width:2em;text-align:center;margin-left:-2em;}'
 										+'.input_bot_quests[value="0"]{color: red;font-weight: 800;}'
 										+'.easy_money{float:left;margin: 3px -2em 3px 0}'
@@ -834,7 +834,7 @@ window.onload = function() {								// Закомментировать  1 из 
 									 +'</style>'
 									 +'<table id="log_table" class="hdr"><tr><td id="log_table_1">&nbsp;</td>'
 									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
-									 +'<table id="lift_table"><tr><td colspan="2">'
+									 +'<table id="event_table"><tr><td colspan="2">'
 									 + "<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
 									 + "Если у вас есть вопросы или пожелания, вы можете их оставить на "
 									 + "<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>"
@@ -894,16 +894,16 @@ window.onload = function() {								// Закомментировать  1 из 
             document.body.insertAdjacentHTML('beforeend','<span style="position:fixed;top:5px;right:10px;">У вас запрещены уведомления!</span>');
             break;
         case "default" :
-            document.body.insertAdjacentHTML('beforeend','<a onclick="Notification.requestPermission(firstMess)" style="position:fixed;top:5px;right:10px;cursor:pointer;"><img src="http://static.nebo.mobi/images/icons/letters.png" alt="Включить уведомления"> Включить уведомления</a>');
+            document.body.insertAdjacentHTML('beforeend','<a onclick="Notification.requestPermission(firstMess)" style="position:fixed;top:5px;right:10px;cursor:pointer;"><img src="http://static.'+DOMAIN_NAME+'/images/icons/letters.png" alt="Включить уведомления"> Включить уведомления</a>');
             break;
 	}
 
 	/* Очищаем раз в час */
 	setInterval(function() {
-		if(document.querySelectorAll('#lift_table tr td')[1].className !== 'clear_log'){
-			var els	= document.querySelectorAll('#lift_table tr'),
+		if(document.querySelectorAll('#event_table tr td')[1].className !== 'clear_log'){
+			var els	= document.querySelectorAll('#event_table tr'),
 				ell	= els.length,
-				lt	= document.getElementById('lift_table');
+				lt	= document.getElementById('event_table');
 				lt.innerHTML = '';
 			for (var i = 0; i < ell; i++) {
 				lt.insertAdjacentHTML("beforeEnd",els[i].innerHTML);
