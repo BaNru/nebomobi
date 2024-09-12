@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Небоскреб
 // @namespace   Игры
-// @version     1.9.0
+// @version     1.9.1
 // @description Бот для игры Небоскребы
 // @match       https://nebo.mobi/*
 // @copyright   BaNru (2014-2024)
@@ -807,6 +807,73 @@ function checkingManager(callback) {
 	return false;
 }
 
+/**
+ * Открывание дверей
+ */
+function doors(url,doors_open){
+
+	if(localStorage.doors_key == undefined || localStorage.doors_key < 1){
+		AddTable('Нечем открывать двери');
+		return false;
+	}
+
+	AddMessTable('Лабиринт запущен', '<img alt="" src="/images/icons/key.png" width="16" height="16"> ' + localStorage.doors_key || 0);
+
+	setTimeout(function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', url || DOMAIN + 'doors', true);
+		// Раскомментировать строчку, если разрешены рефералы в браузере,
+		// немного повышает защиту бота
+		// xhr.setRequestHeader('Referer', DOMAIN + 'doors');
+		xhr.onload = function() {
+			var parser = new DOMParser(),
+				doc = parser.parseFromString(xhr.responseText, "text/html"),
+				doorsLinks = doc.querySelectorAll('[href*=":doorLink"]'),
+				ttime;
+
+				localStorage.doors_key -= 1;
+				AddMessTable('Лабиринт запущен', '<img alt="" src="/images/icons/key.png" width="16" height="16">' + localStorage.doors_key || 0);
+
+				console.log(doc.querySelector('.m5.cntr'));
+
+				let html = doc.querySelector('.m5.cntr');
+				if(doors_open){
+					AddTable('Открыта '+ (doors_open+1)  +' дверь');
+				}
+				if(html.querySelector('.doorSel')){
+					html.querySelector('.doorSel').style.backgroundColor = '#4BF';
+				}
+				html.querySelectorAll('span.amount:first-child,.hint,.minor.small, .hr').forEach(e => e.remove());
+				AddTable(html.innerHTML);
+
+			if (doorsLinks && doorsLinks.length === 3) {
+				let rand_door = Math.floor(Math.random() * (3 - 1 + 1));
+				doors(doorsLinks[rand_door].href, rand_door);
+			} else {
+				// ttime = getTime(doc.querySelector('[id^=time]').innerHTML);
+				// //AddTable();
+				// AddMessTable('Ждем посетителя!','',function(){
+				// 	timer(ttime, document.getElementById('log_table_2'), false);
+				// });
+				setTimeout(function(){
+					AddMessTable('Надо больше ключей!','');
+					doors();
+				}, 5000);
+			}
+		};
+		xhr.onerror = function() {
+			debuglog(xhr);
+			AddTable('Дверь оказалась без замка. Надо вызывать медвежатника!');
+			AddMessTable('Ошибка! Перезапуск через','',function(){
+				timer([0, 0, 0, 10], document.getElementById('log_table_2'), false);
+			});
+			setTimeout(function(){
+				doors();
+			}, 10000);
+		};
+		xhr.send();
+	}, rand_time(5,7));
+}
 
 
 /*
@@ -822,7 +889,7 @@ window.onload = function() {								// Закомментировать  1 из 
 	document.body.insertAdjacentHTML('beforeend',
 									  '<style>'
 										+'#event_table td > img {float:left}'
-										+'#event_table,#log_table{left:10px;position:fixed;width:calc(50% - 320px)}'
+										+'.bot_table{left:10px;position:fixed;width:calc(50% - 320px)}'
 										+'#log_table{top:0;}'
 										+'#event_table{top:28px;}'
 										+'#event_table td > .ctrl {display:block}'
@@ -832,9 +899,12 @@ window.onload = function() {								// Закомментировать  1 из 
 										+'.easy_money{float:left;margin: 3px -2em 3px 0}'
 										+'.input_bot_check{float:left;margin-right:-100%;}'
 									 +'</style>'
-									 +'<table id="log_table" class="hdr"><tr><td id="log_table_1">&nbsp;</td>'
+									 +'<table id="log_table" class="hdr bot_table"><tr><td id="log_table_1">&nbsp;</td>'
 									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
-									 +'<table id="event_table"><tr><td colspan="2">'
+									 +'<table id="event_table" class="bot_table"><tr><td colspan="2" class="amount" style="text-align: center;">'
+									 + "УРА! Вышла новая версия года в честь десятилетия бота!<br>"
+									 + "По просьбе трудящихся было добавлено прохождение ЛАБИРИНТА!"
+									 + '</td></tr><tr><td colspan="2">'
 									 + "<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
 									 + "Если у вас есть вопросы или пожелания, вы можете их оставить на "
 									 + "<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>"
@@ -879,6 +949,15 @@ window.onload = function() {								// Закомментировать  1 из 
 		lobbySelect();
 		lobby();
 		AddTable('Ждём задания в вестибюле.','rc');
+	} else if (/\/doors/.exec(window.location.pathname)) {
+		document.querySelector('#log_table tr').insertAdjacentHTML('afterend','<tr><td>Сколько ключей потратить?</td><td style="text-align:right;"><input value="" size="3" class="Doors_Keys_Input"> <span class="btn DoorsRun" style="cursor:pointer">GO</span></td></tr>');
+		document.querySelector('#event_table').style.top = '62px';
+		document.querySelector('.DoorsRun').addEventListener('click', ()=>{
+			localStorage.doors_key = document.querySelector('.Doors_Keys_Input').value || 0;
+			doors();
+		})
+		AddTable('Запустите прохождение дверей вручную','rc');
+		doors();
 	}
 
 	/* Таймеры */
