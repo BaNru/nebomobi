@@ -722,7 +722,7 @@ function addZero(int_) {
 	return int_;
 }
 
-/*
+/**
  * Функция создания таймера на месте времени,
  * с последующим уведомлением
  *
@@ -776,7 +776,7 @@ function timer(time, id, notice, callback) {
 
 
 
-/*
+/**
  * Проверка на менеджера
  *
  * @param {Function} callback
@@ -809,6 +809,10 @@ function checkingManager(callback) {
 
 /**
  * Открывание дверей
+ *
+ * @param {string} url открытия дври
+ * @param {Function} doors_open порядковый номер двери от 0 до 2
+ *
  */
 function doors(url,doors_open){
 
@@ -965,6 +969,7 @@ window.onload = function() {								// Закомментировать  1 из 
 			<a href="http://nebo.mobi/floors/0/2" title="Закупка товара" target="_blank">Закупка товара</a><br>
 			<a href="http://nebo.mobi/floors/0/3" title="Выложить товар" target="_blank">Выложить товар</a><br>
 			<a href="http://nebo.mobi/humans" title="Мои жители" target="_blank">Мои жители</a><br>
+			<a href="http://nebo.mobi/city/quests" title="Задания города" target="_blank">Задания города</a><br>
 			<a href="http://nebo.mobi/quests" title="Задания" target="_blank">Задания</a><br>
 			<a href="http://nebo.mobi/lobby" title="Вестибюль" target="_blank">Вестибюль</a><br>
 			<a href="http://nebo.mobi/boss" title="Босс" target="_blank">Босс</a><br>
