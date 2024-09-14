@@ -964,16 +964,16 @@ window.onload = function() {								// Закомментировать  1 из 
 		doors();
 	} else {
 		AddTable(`Бот автоматически запускается на страницах:<br>
-			<a href="http://nebo.mobi/lift" title="Лифт" target="_blank">Лифт</a><br>
-			<a href="http://nebo.mobi/floors/0/5" title="Сбор выручки" target="_blank">Сбор выручки</a><br>
-			<a href="http://nebo.mobi/floors/0/2" title="Закупка товара" target="_blank">Закупка товара</a><br>
-			<a href="http://nebo.mobi/floors/0/3" title="Выложить товар" target="_blank">Выложить товар</a><br>
-			<a href="http://nebo.mobi/humans" title="Мои жители" target="_blank">Мои жители</a><br>
-			<a href="http://nebo.mobi/city/quests" title="Задания города" target="_blank">Задания города</a><br>
-			<a href="http://nebo.mobi/quests" title="Задания" target="_blank">Задания</a><br>
-			<a href="http://nebo.mobi/lobby" title="Вестибюль" target="_blank">Вестибюль</a><br>
-			<a href="http://nebo.mobi/boss" title="Босс" target="_blank">Босс</a><br>
-			<a href="http://nebo.mobi/doors" title="Лабиринт" target="_blank">Лабиринт</a><br>
+			<a href="/lift" title="Лифт" target="_blank">Лифт</a><br>
+			<a href="/floors/0/5" title="Сбор выручки" target="_blank">Сбор выручки</a><br>
+			<a href="/floors/0/2" title="Закупка товара" target="_blank">Закупка товара</a><br>
+			<a href="/floors/0/3" title="Выложить товар" target="_blank">Выложить товар</a><br>
+			<a href="/humans" title="Мои жители" target="_blank">Мои жители</a><br>
+			<a href="/city/quests" title="Задания города" target="_blank">Задания города</a><br>
+			<a href="/quests" title="Задания" target="_blank">Задания</a><br>
+			<a href="/lobby" title="Вестибюль" target="_blank">Вестибюль</a><br>
+			<a href="/boss" title="Босс" target="_blank">Босс</a><br>
+			<a href="/doors" title="Лабиринт" target="_blank">Лабиринт</a><br>
 			Для работы бота эти страницы должны быть постоянно открыты`,'rc');
 	}
 
