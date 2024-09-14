@@ -744,7 +744,7 @@ function timer(time, id, notice, callback) {
         seconds_left_h = seconds_left % 3600;
         minutes = parseInt(seconds_left_h / 60);
         seconds = parseInt(seconds_left % 60);
-        id.innerHTML = days + " д, " + addZero(hours) + ":"
+        id.innerHTML = (days == 0 ? '' : (days + " д, ")) + addZero(hours) + ":"
                      + addZero(minutes) + ":" + addZero(seconds);
         if(days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0){
 			clearInterval(int_);
