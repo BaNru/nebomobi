@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Небоскреб
 // @namespace   Игры
-// @version     1.9.1
+// @version     1.9.2
 // @description Бот для игры Небоскребы
 // @match       https://nebo.mobi/*
 // @copyright   BaNru (2014-2024)
@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.9.0';
+BOT.version = '1.9.2';
 const DOMAIN = 'https://nebo.mobi/';
 const DOMAIN_NAME = 'nebo.mobi';
 
@@ -854,11 +854,6 @@ function doors(url,doors_open){
 				let rand_door = Math.floor(Math.random() * (3 - 1 + 1));
 				doors(doorsLinks[rand_door].href, rand_door);
 			} else {
-				// ttime = getTime(doc.querySelector('[id^=time]').innerHTML);
-				// //AddTable();
-				// AddMessTable('Ждем посетителя!','',function(){
-				// 	timer(ttime, document.getElementById('log_table_2'), false);
-				// });
 				setTimeout(function(){
 					AddMessTable('Надо больше ключей!','');
 					doors();
@@ -877,6 +872,133 @@ function doors(url,doors_open){
 		};
 		xhr.send();
 	}, rand_time(5,7));
+}
+
+
+/**
+ *
+ * Выбор в объекте максимального или минимально значения (value)
+ *
+ * @param {*} object
+ * @returns key object
+ *
+ */
+const max = object=>Object.keys(object).reduce((key, v) => object[v] < object[key] ? v : key);
+const min = object=>Object.keys(object).reduce((key, v) => object[v] < object[key] ? v : key);
+
+
+/**
+ * Обёртка fetch Promise, делает запрос к странице и возвращает карточку(и)
+ *
+ * @param {*} url - адрес страницы
+ * @param {*} returnBlock - класс блока карточки(ек), который надо вернуть
+ * @param {*} single - выборка массива карточкек (по умолчанию) или одну карточку
+ *
+ * @returns Promise documents node
+ *
+ */
+function fetch_promise(url,returnBlock,single = false) {
+	return new Promise((resolve, reject) => {
+		// url = url.replace(/https?:\/\/nebo.mobi\//,'');
+		fetch(DOMAIN+url)
+			.then(response => {
+				return response.text();
+			})
+			.then(text => {
+				var parser = new DOMParser();
+				var document_ = parser.parseFromString(text, "text/html");
+				resolve( single ? document_.querySelector(returnBlock) : document_.querySelectorAll(returnBlock) );
+			}).catch(err=>{
+				reject(err)
+			});
+	})
+}
+
+
+// function replaceCard(original,new_) {
+
+// }
+
+var Datenow = () => parseInt(Date.now()/1000);
+
+/**
+ * Ферма
+ */
+const TIMERS = {
+	'fabric/floor/0/1' : Datenow() + 1,
+	'fabric/floor/0/2' : Datenow() + 2,
+	'fabric/floor/0/3' : Datenow() + 3,
+	'fabric/floor/0/4' : Datenow() + 4,
+	'fabric/floor/0/5' : Datenow() + 5
+};
+
+// parseInt(Date.now() / 1000) - 715
+function fabric(url){
+		url = url || min(TIMERS);
+		console.log(TIMERS, url, TIMERS[url]);
+		setTimeout(function(){
+			// ('.fd, .sr, .rc, .fs, .el')
+			// Добавить в очередь
+			// ?wicket:interface=:[0-9]{5}:product1:startContainer:startLink::ILinkListener::
+			// Забрать
+			// ?wicket:interface=:[0-9]{5}:product1:collectContainer:collectLink::ILinkListener::"
+			fetch_promise(url,'.flbdy.snow3_.gift_', true)
+				.then(block=>{
+					let link = block.querySelector('.tdu') && block.querySelector('.tdu').getAttribute('href');
+					let time = block.querySelector('[id*="time_"]');
+
+					// findFloor
+					var floor = url.match(/fabric\/floor\/0\/([0-9])/);
+					if(floor){
+						floor = floor[1];
+					}else{
+						let img = block.querySelector('.flogo');
+						if(img){
+							img = img.src.match(/september2024\/(?:ready|time)([0-9])\.(?:gif|png)/);
+							if(img && img[1]){
+								floor = img[1];
+							}
+						}
+					}
+					if(floor){
+						let el = document.querySelectorAll('.fd > .flbdy, .sr > .flbdy, .rc > .flbdy, .fs > .flbdy, .el > .flbdy')[floor-1]
+						el.innerHTML = block.innerHTML;
+						let time = el.querySelector('[id^=time]');
+						if(time){
+							time.title = time.innerHTML;
+							timer(getTime(time.innerHTML), time,true);
+						}
+					}
+
+					AddTable(block.innerHTML);
+
+					if (link && /startContainer/.test(link)) {
+						console.log(1);
+						fabric(link);
+					} else if (link && /collectContainer/.test(link)) {
+						console.log(2);
+						fabric(link);
+						document.querySelector('.fabricBot').textContent = parseInt(document.querySelector('.fabricBot').textContent)+1;
+					} else if (time){
+						console.log(3);
+						TIMERS['fabric/floor/0/'+floor] = Datenow() + getSecond(getTime(time.textContent));
+						fabric();
+					} else {
+						console.log(4);
+						TIMERS['fabric/floor/0/'+floor] = 3;
+						fabric();
+					}
+				})
+				.catch(err=>{
+					AddTable('Что-то сломалось! Будем пробовать ещё раз!');
+					setTimeout(() => {
+						fabric(url);
+					}, 3000);
+					console.log(err);
+				})
+		},  ( TIMERS[url] - Datenow() ) * 1000);
+		console.log(TIMERS);
+	//}
 }
 
 
@@ -906,6 +1028,8 @@ window.onload = function() {								// Закомментировать  1 из 
 									 +'<table id="log_table" class="hdr bot_table"><tr><td id="log_table_1">&nbsp;</td>'
 									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
 									 +'<table id="event_table" class="bot_table"><tr><td colspan="2" class="amount" style="text-align: center;">'
+									 + "Лучше поздно, чем никогда! ДОБАВЛЕНА ФЕРМА! Некоторые могут успеть воспользоваться на этих выходных в последние дни. Переходите на страницу <a href='/fabric' title='Ферма' target='_blank'>Фермы</a> и наблюдайте за процессом производства и сбора в новом интерактивном формате. Это задел на будущее улучшение бота, который будет ещё больше интегрирован в игру."
+									 + '</td></tr><tr><td colspan="2" style="text-align: center;">'
 									 + "УРА! Вышла новая версия года в честь десятилетия бота!<br>"
 									 + "По просьбе трудящихся было добавлено прохождение ЛАБИРИНТА!"
 									 + '</td></tr><tr><td colspan="2">'
@@ -962,6 +1086,10 @@ window.onload = function() {								// Закомментировать  1 из 
 		})
 		AddTable('Запустите прохождение дверей вручную','rc');
 		doors();
+	} else if (/\/fabric/.exec(window.location.pathname)) {
+		fabric();
+		AddTable('Агрофитнес начинаем! Раз, два!','rc');
+		document.querySelector('.cntr.nshd.m5.white').insertAdjacentHTML('beforeend',' <span class="amount"> Собрано: <b class="fabricBot">0</b></span>');
 	} else {
 		AddTable(`Бот автоматически запускается на страницах:<br>
 			<a href="/lift" title="Лифт" target="_blank">Лифт</a><br>
