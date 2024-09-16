@@ -867,8 +867,6 @@ function doors(url,doors_open){
 				localStorage.doors_key -= 1;
 				AddMessTable('Лабиринт запущен', '<img alt="" src="/images/icons/key.png" width="16" height="16">' + localStorage.doors_key || 0);
 
-				console.log(doc.querySelector('.m5.cntr'));
-
 				let html = doc.querySelector('.m5.cntr');
 				if(doors_open){
 					AddTable('Открыта '+ (doors_open+1)  +' дверь');
@@ -963,71 +961,64 @@ const TIMERS = {
 
 // parseInt(Date.now() / 1000) - 715
 function fabric(url){
-		url = url || min(TIMERS);
-		console.log(TIMERS, url, TIMERS[url]);
-		setTimeout(function(){
-			// ('.fd, .sr, .rc, .fs, .el')
-			// Добавить в очередь
-			// ?wicket:interface=:[0-9]{5}:product1:startContainer:startLink::ILinkListener::
-			// Забрать
-			// ?wicket:interface=:[0-9]{5}:product1:collectContainer:collectLink::ILinkListener::"
-			fetch_promise(url,'.flbdy.snow3_.gift_', true)
-				.then(block=>{
-					let link = block.querySelector('.tdu') && block.querySelector('.tdu').getAttribute('href');
-					let time = block.querySelector('[id*="time_"]');
+	url = url || min(TIMERS);
+	setTimeout(function(){
+		// ('.fd, .sr, .rc, .fs, .el')
+		// Добавить в очередь
+		// ?wicket:interface=:[0-9]{5}:product1:startContainer:startLink::ILinkListener::
+		// Забрать
+		// ?wicket:interface=:[0-9]{5}:product1:collectContainer:collectLink::ILinkListener::"
+		fetch_promise(url,'.flbdy.snow3_.gift_', true)
+			.then(block=>{
+				let link = block.querySelector('.tdu') && block.querySelector('.tdu').getAttribute('href');
+				let time = block.querySelector('[id*="time_"]');
 
-					// findFloor
-					var floor = url.match(/fabric\/floor\/0\/([0-9])/);
-					if(floor){
-						floor = floor[1];
-					}else{
-						let img = block.querySelector('.flogo');
-						if(img){
-							img = img.src.match(/september2024\/(?:ready|time)([0-9])\.(?:gif|png)/);
-							if(img && img[1]){
-								floor = img[1];
-							}
+				// findFloor
+				var floor = url.match(/fabric\/floor\/0\/([0-9])/);
+				if(floor){
+					floor = floor[1];
+				}else{
+					let img = block.querySelector('.flogo');
+					if(img){
+						img = img.src.match(/september2024\/(?:ready|time)([0-9])\.(?:gif|png)/);
+						if(img && img[1]){
+							floor = img[1];
 						}
 					}
-					if(floor){
-						let el = document.querySelectorAll('.fd > .flbdy, .sr > .flbdy, .rc > .flbdy, .fs > .flbdy, .el > .flbdy')[floor-1]
-						el.innerHTML = block.innerHTML;
-						let time = el.querySelector('[id^=time]');
-						if(time){
-							time.title = time.innerHTML;
-							timer(getTime(time.innerHTML), time,true);
-						}
+				}
+				if(floor){
+					let el = document.querySelectorAll('.fd > .flbdy, .sr > .flbdy, .rc > .flbdy, .fs > .flbdy, .el > .flbdy')[floor-1]
+					el.innerHTML = block.innerHTML;
+					let time = el.querySelector('[id^=time]');
+					if(time){
+						time.title = time.innerHTML;
+						timer(getTime(time.innerHTML), time,true);
 					}
+				}
 
-					AddTable(block.innerHTML);
+				AddTable(block.innerHTML);
 
-					if (link && /startContainer/.test(link)) {
-						console.log(1);
-						fabric(link);
-					} else if (link && /collectContainer/.test(link)) {
-						console.log(2);
-						fabric(link);
-						document.querySelector('.fabricBot').textContent = parseInt(document.querySelector('.fabricBot').textContent)+1;
-					} else if (time){
-						console.log(3);
-						TIMERS['fabric/floor/0/'+floor] = Datenow() + getSecond(getTime(time.textContent));
-						fabric();
-					} else {
-						console.log(4);
-						TIMERS['fabric/floor/0/'+floor] = 3;
-						fabric();
-					}
-				})
-				.catch(err=>{
-					AddTable('Что-то сломалось! Будем пробовать ещё раз!');
-					setTimeout(() => {
-						fabric(url);
-					}, 3000);
-					console.log(err);
-				})
-		},  ( TIMERS[url] - Datenow() ) * 1000);
-		console.log(TIMERS);
-	//}
+				if (link && /startContainer/.test(link)) {
+					fabric(link);
+				} else if (link && /collectContainer/.test(link)) {
+					fabric(link);
+					document.querySelector('.fabricBot').textContent = parseInt(document.querySelector('.fabricBot').textContent)+1;
+				} else if (time){
+					TIMERS['fabric/floor/0/'+floor] = Datenow() + getSecond(getTime(time.textContent));
+					fabric();
+				} else {
+					TIMERS['fabric/floor/0/'+floor] = 3;
+					fabric();
+				}
+			})
+			.catch(err=>{
+				AddTable('Что-то сломалось! Будем пробовать ещё раз!');
+				setTimeout(() => {
+					fabric(url);
+				}, 3000);
+				console.log(err);
+			})
+	},  ( TIMERS[url] - Datenow() ) * 1000);
 }
 
 
