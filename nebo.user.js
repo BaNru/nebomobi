@@ -648,8 +648,9 @@ function lobbySelect(){
 function AddTable(e,c){
 	var d = new Date();
 	var t = addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds());
-	document.getElementById('event_table').insertAdjacentHTML('afterbegin',
+	document.querySelector('#event_table tbody').insertAdjacentHTML('afterbegin',
 		'<tr><td>'+t+'</td><td class="'+(c||'')+'">'+e+'</td></tr>');
+	document.querySelectorAll('#event_table tr:nth-child(n+10)').forEach(item=>{item.remove()})
 }
 function AddMessTable(f,s,callback){
 	document.getElementById('log_table_1').innerHTML = f;
