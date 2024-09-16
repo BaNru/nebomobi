@@ -727,24 +727,31 @@ function addZero(int_) {
  * Функция создания таймера на месте времени,
  * с последующим уведомлением
  *
- * @param {String} time - время
+ * @param {Array<4>|String|Number} time - время. На входе возможны массив [0,0,0,0], string время в формате игры "29 м 59 сек"
  * @param {String} id - элемент
  * @param {String} notice - текст уведомления
  * @param {Function} callback функция, необязательный параметр
  *
  */
 function timer(time, id, notice, callback) {
-	var seconds_left = getSecond(time);
+	// Проверяем и преобразуем формат фремени
+	if(Array.isArray(time) && time.length == 4){
+		time = getSecond(time);
+	} else if (typeof time === 'string'){
+		getSecond(getTime(time));
+	} else {
+		time = Number(time) || 1;
+	}
 	var int_ = setInterval(function () {
 		var seconds_left_d, seconds_left_h,
 			days, hours, minutes, seconds, tpmcl, notifyD = {};
-		seconds_left--;
-        days = parseInt(seconds_left / 86400);
-        seconds_left_d = seconds_left % 86400;
+		time--;
+        days = parseInt(time / 86400);
+        seconds_left_d = time % 86400;
         hours = parseInt(seconds_left_d / 3600);
-        seconds_left_h = seconds_left % 3600;
+        seconds_left_h = time % 3600;
         minutes = parseInt(seconds_left_h / 60);
-        seconds = parseInt(seconds_left % 60);
+        seconds = parseInt(time % 60);
         id.innerHTML = (days == 0 ? '' : (days + " д, ")) + addZero(hours) + ":"
                      + addZero(minutes) + ":" + addZero(seconds);
         if(days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0){
