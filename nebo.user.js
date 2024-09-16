@@ -90,7 +90,10 @@ function liftFN() {
 			var parser = new DOMParser(),
 				doc = parser.parseFromString(xhr.responseText, "text/html"),
 				lift = doc.getElementsByClassName('lift')[0],
-				ttime;
+				el = document.querySelector('div.vs .flbdy');
+
+			lift.appendChild(lift.querySelector(".clb"));
+
 			if (lift && lift.getElementsByClassName('tdu')[0]) {
 				end_xhr(
 					lift.getElementsByClassName('tdu')[0].href ||
@@ -100,16 +103,34 @@ function liftFN() {
 					DOMAIN + 'lift',
 					liftFN
 				);
+				el.innerHTML = '<div class="lift">' + lift.innerHTML + '</div>';
+				if(!doc.querySelector('.lift .white').classList.contains('nwr')){
+					document.querySelector('.vs .rs.small').textContent = Number(document.querySelector('.vs .rs.small').textContent) + 1;
+				}
 			} else {
-				ttime = getTime(doc.querySelector('[id^=time]').innerHTML);
+				let ttime = 3;
 				AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
-				AddMessTable('Ждем посетителя!','',function(){
-					timer(ttime, document.getElementById('log_table_2'), false);
-				});
+				let time = doc.querySelector('[id^=time]'),
+					el = document.querySelector('div.vs .flbdy');
+				if(time){
+					ttime = getSecond(getTime(time.innerHTML));
+					time.title = time.innerHTML;
+					time.className = "minor small flr";
+					lift.querySelector('.flr').parentNode.replaceChild(time,lift.querySelector('.flr'));
+					AddMessTable('Ждем посетителя!','',function(){
+						timer(ttime, document.getElementById('log_table_2'), false);
+					});
+				}
+				if(el){
+					el.innerHTML = '<div class="lift">' + lift.innerHTML.replace() + '</div>';
+					if(time && lift.querySelector('.flr')){
+						timer(ttime, el.querySelector('[id^=time]'), true);
+					}
+				}
 				setTimeout(function(){
 					AddMessTable('Развозим дальше','');
 					liftFN();
-				}, getSecond(ttime)*1000);
+				}, ttime*1000);
 			}
 		};
 		xhr.onerror = function() {
@@ -1021,37 +1042,73 @@ window.onload = function() {								// Закомментировать  1 из 
 
 	/* Создаём таблицу логов */
 	document.body.insertAdjacentHTML('beforeend',
-									  '<style>'
-										+'#event_table td > img {float:left}'
-										+'.bot_table{left:10px;position:fixed;width:calc(50% - 320px)}'
-										+'#log_table{top:0;}'
-										+'#event_table{top:28px;}'
-										+'#event_table td > .ctrl {display:block}'
-										+'#event_table td{border-bottom: 1px dotted #275587}'
-										+'.input_bot_quests,.easy_money{float: right;width:2em;text-align:center;margin-left:-2em;}'
-										+'.input_bot_quests[value="0"]{color: red;font-weight: 800;}'
-										+'.easy_money{float:left;margin: 3px -2em 3px 0}'
-										+'.input_bot_check{float:left;margin-right:-100%;}'
-									 +'</style>'
-									 +'<table id="log_table" class="hdr bot_table"><tr><td id="log_table_1">&nbsp;</td>'
-									 +'<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td></tr></table>'
-									 +'<table id="event_table" class="bot_table"><tr><td colspan="2" class="amount" style="text-align: center;">'
-									 + "Лучше поздно, чем никогда! ДОБАВЛЕНА ФЕРМА! Некоторые могут успеть воспользоваться на этих выходных в последние дни. Переходите на страницу <a href='/fabric' title='Ферма' target='_blank'>Фермы</a> и наблюдайте за процессом производства и сбора в новом интерактивном формате. Это задел на будущее улучшение бота, который будет ещё больше интегрирован в игру."
-									 + '</td></tr><tr><td colspan="2" style="text-align: center;">'
-									 + "УРА! Вышла новая версия года в честь десятилетия бота!<br>"
-									 + "По просьбе трудящихся было добавлено прохождение ЛАБИРИНТА!"
-									 + '</td></tr><tr><td colspan="2">'
-									 + "<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
-									 + "Если у вас есть вопросы или пожелания, вы можете их оставить на "
-									 + "<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>"
-									 + '</td></tr></table>');
+									  `<style>
+										#event_table td > img {float:left}
+										.bot_table{left:10px;position:fixed;width:calc(50% - 320px)}
+										#log_table{top:0;}
+										#event_table{top:28px;}
+										#event_table td > .ctrl {display:block}
+										#event_table td{border-bottom: 1px dotted #275587}
+										.input_bot_quests,.easy_money{float: right;width:2em;text-align:center;margin-left:-2em;}
+										.input_bot_quests[value="0"]{color: red;font-weight: 800;}
+										.easy_money{float:left;margin: 3px -2em 3px 0}
+										.input_bot_check{float:left;margin-right:-100%;}
+										.tabs li {
+											display:inline-block;
+										}
+										[data-hover]{
+											position: relative;
+											cursor:pointer;
+										}
+										[data-hover]:hover:before {
+											content:attr(data-hover);
+											position: absolute;
+											bottom:-100%;
+											background-color:#444;
+											color:#f0f0f0;
+											padding: 2px 5px;
+										}
+									</style>
+									<table id="log_table" class="hdr bot_table"><tbody>
+											<tr>
+												<td id="log_table_1">&nbsp;</td>
+												<td id="log_table_2" style="text-align:right;" class="amount">&nbsp;</td>
+											</tr>
+									</tbody></table>
+									<table id="event_table" class="bot_table"><tbody>
+										<tr><td colspan="2" class="amount" style="text-align: center;">
+											Лучше поздно, чем никогда! ДОБАВЛЕНА ФЕРМА! Некоторые могут успеть воспользоваться на этих выходных в последние дни. Переходите на страницу <a href='/fabric' title='Ферма' target='_blank'>Фермы</a> и наблюдайте за процессом производства и сбора в новом интерактивном формате. Это задел на будущее улучшение бота, который будет ещё больше интегрирован в игру.
+										</td></tr>
+										<tr><td colspan="2" style="text-align: center;">
+											УРА! Вышла новая версия года в честь десятилетия бота!<br>"
+											По просьбе трудящихся было добавлено прохождение ЛАБИРИНТА!"
+										'</td></tr>
+										<tr><td colspan="2">
+											<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
+											Если у вас есть вопросы или пожелания, вы можете их оставить на "
+											<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>"
+										</td></tr>
+									</tbody></table>
+									`);
 
 	AddMessTable('Небобот запущен', BOT.version);
 
 
 
-	if (/\/lift/.exec(window.location.pathname)) {
+	if (/\/home/.exec(window.location.pathname)) {
+		document.querySelector('.main').insertAdjacentHTML('afterbegin',`
+		<div class="nshd nfl ny">
+			<ul class="tabs">
+				<li data-hover="Жители"><img alt="Жители" src="/images/icons/man.png" width="16" height="16"></li>
+				<li data-hover="Лифт"><img alt="Лифт" src="/images/icons/tb_lift.png" width="16" height="16"></li>
+			</ul>
+			<table id="event_table" class="bot_table"><tbody>
+
+			</tbody></table>
+		</div>
+		`);
 		liftFN();
+		document.querySelector('.vs .rs.small').textContent = 0;
 		AddTable('Лифтёр скоро приступит к работе.','rc');
 	} else if (/\/humans/.exec(window.location.pathname)) {
 		humansFN();
