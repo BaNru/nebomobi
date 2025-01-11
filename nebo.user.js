@@ -1067,13 +1067,11 @@ window.onload = function() {								// Закомментировать  1 из 
 											</tr>
 									</tbody></table>
 									<table id="event_table" class="bot_table"><tbody>
-										<tr><td colspan="2" class="amount" style="text-align: center;">
-											Лучше поздно, чем никогда! ДОБАВЛЕНА ФЕРМА! Некоторые могут успеть воспользоваться на этих выходных в последние дни. Переходите на страницу <a href='/fabric' title='Ферма' target='_blank'>Фермы</a> и наблюдайте за процессом производства и сбора в новом интерактивном формате. Это задел на будущее улучшение бота, который будет ещё больше интегрирован в игру.
+										<tr><td colspan="2" class="amount" style="text-align: left;">
+											Новогоднее обновление:<br>
+											- Лифтёр работает теперь на главной.:<br>
+											- На главной теперь оновляются денежки и задания.
 										</td></tr>
-										<tr><td colspan="2" style="text-align: center;">
-											УРА! Вышла новая версия года в честь десятилетия бота!<br>"
-											По просьбе трудящихся было добавлено прохождение ЛАБИРИНТА!"
-										'</td></tr>
 										<tr><td colspan="2">
 											<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
 											Если у вас есть вопросы или пожелания, вы можете их оставить на "
@@ -1089,11 +1087,11 @@ window.onload = function() {								// Закомментировать  1 из 
 	if (/\/home/.exec(window.location.pathname)) {
 		document.querySelector('.main').insertAdjacentHTML('afterbegin',`
 		<div class="nshd nfl ny">
-			<ul class="tabs">
+			<!-- <ul class="tabs">
 				<li data-hover="Жители"><img alt="Жители" src="/images/icons/man.png" width="16" height="16"></li>
 				<li data-hover="Лифт"><img alt="Лифт" src="/images/icons/tb_lift.png" width="16" height="16"></li>
-			</ul>
-			<table id="event_table" class="bot_table"><tbody>
+			</ul>-->
+			<table id="event_table" class="bot_table" style="left: auto;right: 0;"><tbody>
 
 			</tbody></table>
 		</div>
