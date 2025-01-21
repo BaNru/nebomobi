@@ -29,7 +29,7 @@ function debuglog(){
  *
  * @param {string} url - страница действия
  * @param {string} text - сообщение для вывода на экран
- * @param {string} time - вреия ожидания перед действие
+ * @param {string} time - вреия ожидания перед действием
  * @param {string} ref - реферал, если разрешено в браузере
  * @param {function} callback function, необязательный параметр
  *
@@ -660,22 +660,30 @@ function lobbySelect(){
 
 
 
-/*
- * Функция добавления в "логи"
+/**
+ * Функция добавления в "логи" форматированного текста
  *
- * @param {String} текст сообщения
- * @param {String} class, необязательный параметр
+ * @param {String} text - текст сообщения
+ * @param {String} className необязательный параметр
  */
-function AddTable(e,c){
+function AddTable(text, className = '') {
 	var d = new Date();
 	var t = addZero(d.getHours())+':'+addZero(d.getMinutes())+':'+addZero(d.getSeconds());
 	document.querySelector('#event_table tbody').insertAdjacentHTML('afterbegin',
-		'<tr><td>'+t+'</td><td class="'+(c||'')+'">'+e+'</td></tr>');
+		'<tr><td>' + t + '</td><td class="' + className + '">' + text +'</td></tr>');
 	document.querySelectorAll('#event_table tr:nth-child(n+10)').forEach(item=>{item.remove()})
 }
-function AddMessTable(f,s,callback){
-	document.getElementById('log_table_1').innerHTML = f;
-	document.getElementById('log_table_2').innerHTML = s;
+/**
+ * Функция добавления в таблицу Логов
+ *
+ * @param {String} firstText текст сообщения
+ * @param {String} secondText,текст сообщения
+ * @param {function} callback function, необязательный параметр
+ *
+ */
+function AddMessTable(firstText, secondText, callback) {
+	document.getElementById('log_table_1').innerHTML = firstText;
+	document.getElementById('log_table_2').innerHTML = secondText;
 	if(callback)callback();
 }
 
@@ -1070,12 +1078,12 @@ window.onload = function() {								// Закомментировать  1 из 
 										<tr><td colspan="2" class="amount" style="text-align: left;">
 											Новогоднее обновление:<br>
 											- Лифтёр работает теперь на главной.:<br>
-											- На главной теперь оновляются денежки и задания.
+											- На главной теперь обновляются денежки и задания.
 										</td></tr>
 										<tr><td colspan="2">
-											<small>Спасибо что воспользовались ботом для игры в Небоскрёбы! "
-											Если у вас есть вопросы или пожелания, вы можете их оставить на "
-											<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>"
+											<small>Спасибо что воспользовались ботом для игры в Небоскрёбы!
+											Если у вас есть вопросы или пожелания, вы можете их оставить на
+											<a href='http://blog.g63.ru/?p=1903' target='_blank'>странице проекта</a></small>
 										</td></tr>
 									</tbody></table>
 									`);
