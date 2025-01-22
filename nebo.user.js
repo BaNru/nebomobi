@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Небоскреб
 // @namespace   Игры
-// @version     1.9.2
+// @version     1.9.3
 // @description Бот для игры Небоскребы
 // @match       https://nebo.mobi/*
 // @copyright   BaNru (2014-2024)
@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.9.2';
+BOT.version = '1.9.3';
 const DOMAIN = 'https://nebo.mobi/';
 const DOMAIN_NAME = 'nebo.mobi';
 
