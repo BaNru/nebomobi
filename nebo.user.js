@@ -841,6 +841,11 @@ function checkingManager(callback) {
 					);
 				}
 			);
+			timer(
+				getTime(chM.trim()),
+				els[i].querySelector('span'),
+				'Менеджер закончил свою работу!'
+			);
 			return true;
 		}
 	}
@@ -1107,6 +1112,7 @@ window.onload = function() {								// Закомментировать  1 из 
 			</tbody></table>
 		</div>
 		`);
+		checkingManager();
 		liftFN();
 		document.querySelector('.vs .rs.small').textContent = 0;
 		AddTable('Лифтёр скоро приступит к работе.','rc');
