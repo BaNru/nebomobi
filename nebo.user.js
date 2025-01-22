@@ -38,7 +38,7 @@ function debuglog(){
  */
 function end_xhr(url, text, time, ref, callback) {
 	setTimeout(function(){
-		var xhr = new XMLHttpRequest();
+		let xhr = new XMLHttpRequest();
 		xhr.open('GET', url, true);
 		// Раскомментировать строчку, если разрешены рефералы в браузере,
 		// немного повышает защиту бота
@@ -46,6 +46,9 @@ function end_xhr(url, text, time, ref, callback) {
 		xhr.onload = function() {
 			AddTable(text);
 			debuglog(url, xhr.responseURL);
+			let parser = new DOMParser();
+			let document_ = parser.parseFromString(xhr.response, "text/html");
+			updateBlocks(document_);
 		};
 		xhr.onerror = function() {
 			debuglog(xhr);
