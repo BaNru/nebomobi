@@ -953,17 +953,23 @@ function fetch_promise(url,returnBlock,single = false) {
 
 // Обновление строки с деньгами
 function updateBlocks(doc) {
+	// Обновление блока с деньгами
 	let cash = doc.querySelector('.cash');
 	cash?.querySelector('script')?.remove()
 	document.querySelector('.cash').innerHTML = cash.innerHTML;
 
-	let quests = doc.querySelector('a[href="city/quests"]');
-	let quests_page = document.querySelector('a[href="city/quests"]');
-	if(quests && quests_page){
-		quests_page.closest('.nfl').innerHTML = quests.closest('.nfl').innerHTML;
-	}
-	let curDoors = doc.querySelector('a.link.tdn[href="doors"],a.white.tdn[href="city/coll"]');
-	let doors_page = document.querySelector('a.link.tdn[href="doors"],a.white.tdn[href="city/coll"]');
+	// Обновление блоков с заданиями
+	let notify = doc.querySelectorAll('.nfl .prgbr');
+	notify.forEach((element, index) => {
+		let notify_new = document.querySelectorAll('.nfl .prgbr')[index];
+		if (notify_new) {
+			notify_new.closest('.nfl').innerHTML = element.closest('.nfl').innerHTML;
+		}
+	})
+
+	// Обновление ключей
+	let curDoors = doc.querySelector('a.link.tdn[href="doors"]');
+	let doors_page = document.querySelector('a.link.tdn[href="doors"]');
 	if (curDoors && doors_page){
 		doors_page.innerHTML = curDoors.innerHTML;
 	}
