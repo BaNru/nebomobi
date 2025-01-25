@@ -942,8 +942,10 @@ function fetch_promise(url,returnBlock,single = false) {
 			.then(text => {
 				var parser = new DOMParser();
 				var document_ = parser.parseFromString(text, "text/html");
-				resolve( single ? document_.querySelector(returnBlock) : document_.querySelectorAll(returnBlock) );
+				updateBlocks(document_);
+				resolve( [single ? document_.querySelector(returnBlock) : document_.querySelectorAll(returnBlock), document_] );
 			}).catch(err=>{
+				console.error('Ошибка', err);
 				reject(err)
 			});
 	})
@@ -961,14 +963,11 @@ function updateBlocks(doc) {
 	if(quests && quests_page){
 		quests_page.closest('.nfl').innerHTML = quests.closest('.nfl').innerHTML;
 	}
-	let doors_page = document.querySelector('a.white.tdn[href="doors"],a.white.tdn[href="city/coll"]');
-	if(doors && doors_page){
-		doors_page.innerHTML = doors.innerHTML;
-		// if(doors_page.querySelector('')){
-		// 	end_xhr('','Задание выполнено',1000,'/home');
-		// }
+	let curDoors = doc.querySelector('a.link.tdn[href="doors"],a.white.tdn[href="city/coll"]');
+	let doors_page = document.querySelector('a.link.tdn[href="doors"],a.white.tdn[href="city/coll"]');
+	if (curDoors && doors_page){
+		doors_page.innerHTML = curDoors.innerHTML;
 	}
-
 }
 
 
