@@ -976,6 +976,59 @@ function updateBlocks(doc) {
 }
 
 
+/**
+ * Функция квесты (заданий-событий)
+ */
+function quests_events() {
+	// Список страниц для срабатывания
+	var URLS_EVENTS = [
+		'timebox' // Контракты, событие с 20 по 26 января
+	]
+	if (new RegExp(URLS_EVENTS.join('|')).exec(window.location.pathname)) {
+		fetch_promise(window.location.pathname, 'a.btng[href*="getQuest"],.nfl a.btng', true)
+			.then(([block, doc]) => {
+				if (block) {
+					end_xhr(
+						block.href,
+						block.textContent,
+						rand_time(),
+						quests_events
+					)
+				} else {
+					if (doc.querySelector('.cntr.minor.small [id*="time_"]')) {
+						let t = getTime(doc.querySelector('.cntr.minor.small [id*="time_"]').textContent);
+						setTimeout(() => {
+							AddMessTable(
+								'Ждём задание',
+								'',
+								() => {
+									timer(
+										t,
+										document.getElementById('log_table_2'),
+										false,
+										quests_events
+									);
+								}
+							);
+						}, t);
+					} else {
+						setTimeout(() => {
+							quests_events();
+						}, 3 * 60 * 1000); // Проверяем раз в 3 мин
+					}
+				}
+			})
+			.catch(err => {
+				AddTable('Что-то сломалось! Будем пробовать ещё раз!');
+				setTimeout(() => {
+					quests_events();
+				}, 3000);
+				console.error(err);
+			})
+	}
+}
+
+
 // function replaceCard(original,new_) {
 
 // }
@@ -1193,6 +1246,9 @@ window.onload = function() {								// Закомментировать  1 из 
 			<a href="/doors" title="Лабиринт" target="_blank">Лабиринт</a><br>
 			Для работы бота эти страницы должны быть постоянно открыты`,'rc');
 	}
+
+	// Заданий-событий
+	quests_events();
 
 	/* Таймеры */
     var time = document.querySelectorAll('[id^=time]');
