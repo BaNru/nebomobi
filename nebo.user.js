@@ -91,8 +91,7 @@ function liftFN() {
 
 				if (lift && lift.getElementsByClassName('tdu')[0]) {
 					end_xhr(
-						lift.getElementsByClassName('tdu')[0].href ||
-						DOMAIN + lift.getElementsByClassName('tdu')[0].getAttribute('href'),
+						lift.getElementsByClassName('tdu')[0].href || DOMAIN + lift.getElementsByClassName('tdu')[0].getAttribute('href'),
 						lift.innerHTML.replace('<div class="clb"></div>',''),
 						rand_time(1,3),
 						DOMAIN + 'lift',
@@ -964,6 +963,8 @@ function updateBlocks(doc) {
 		let notify_new = document.querySelectorAll('.nfl .prgbr')[index];
 		if (notify_new) {
 			notify_new.closest('.nfl').innerHTML = element.closest('.nfl').innerHTML;
+		} else if (document.querySelector('.main > .hr')){
+			document.querySelector('.main > .hr').insertAdjacentHTML('afterend', element.closest('.nfl').outerHTML);
 		}
 	})
 
@@ -992,6 +993,7 @@ function quests_events() {
 						block.href,
 						block.textContent,
 						rand_time(),
+						block.href,
 						quests_events
 					)
 				} else {
