@@ -119,7 +119,7 @@ function liftFN() {
 					if(el){
 						el.innerHTML = '<div class="lift">' + lift.innerHTML.replace() + '</div>';
 						if(time && lift.querySelector('.flr')){
-							timer(ttime, el.querySelector('[id^=time]'), true);
+							timer(ttime, el.querySelector('[id^=time]'), false);
 						}
 					}
 					setTimeout(function(){
@@ -784,18 +784,17 @@ function timer(time, id, notice, callback) {
 			if (notice) {
 				tpmcl = id.closest('.flbdy') || false;
 				if(tpmcl){
-					notifyD.name = tpmcl.parentNode.querySelector('.flhdr > span').innerText.trim();
-					notifyD.body = tpmcl.querySelector('.state').innerText.trim();
-					notifyD.icon = tpmcl.querySelector('img').src;
+					notifyD.name = tpmcl?.parentNode.querySelector('.flhdr > span')?.innerText.trim();
+					notifyD.body = tpmcl?.querySelector('.state')?.innerText.trim();
+					notifyD.icon = tpmcl?.querySelector('img')?.src;
 				} else if (id.closest('.flr.small.amount')) {
-					notifyD.name = id.parentNode.parentNode.querySelector('.lift .ctrl').innerText.trim();
-					notifyD.body = id.parentNode.parentNode.querySelector('.lift .nshd').innerText.trim();
-					notifyD.icon = id.parentNode.parentNode.querySelector('.lift img').src;
-				} else {
-					notifyD.name = 'Неизвестный таймер';
-					notifyD.body = 'Какой-то таймер завершился';
-					notifyD.icon = 'http://igrotop.mobi/images/game7.png';
+					notifyD.name = id?.parentNode?.parentNode?.querySelector('.lift .ctrl')?.innerText.trim();
+					notifyD.body = id?.parentNode?.parentNode?.querySelector('.lift .nshd')?.innerText.trim();
+					notifyD.icon = id?.parentNode?.parentNode?.querySelector('.lift img')?.src;
 				}
+				notifyD.name = notifyD.name || 'Неизвестный таймер';
+				notifyD.body = notifyD.body || 'Какой-то таймер завершился';
+				notifyD.icon = notifyD.icon || 'http://igrotop.mobi/images/game7.png';
 				new Notification(notifyD.name, {
 					tag : DOMAIN_NAME,
 					body : notifyD.body,
