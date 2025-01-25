@@ -84,69 +84,61 @@ function rand_time(min, max) {
 /* Лифтер */
 function liftFN() {
 	setTimeout(function(){
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', DOMAIN + 'lift', true);
-		// Раскомментировать строчку, если разрешены рефералы в браузере,
-		// немного повышает защиту бота
-		// xhr.setRequestHeader('Referer', DOMAIN + 'lift');
-		xhr.onload = function() {
-			var parser = new DOMParser(),
-				doc = parser.parseFromString(xhr.responseText, "text/html"),
-				lift = doc.getElementsByClassName('lift')[0],
-				el = document.querySelector('div.vs .flbdy');
+		fetch_promise('lift','.lift', true)
+			.then(([lift,doc])=>{
+				let el = document.querySelector('div.vs .flbdy');
+				lift.appendChild(lift.querySelector(".clb"));
 
-			lift.appendChild(lift.querySelector(".clb"));
-
-			if (lift && lift.getElementsByClassName('tdu')[0]) {
-				end_xhr(
-					lift.getElementsByClassName('tdu')[0].href ||
-					DOMAIN + lift.getElementsByClassName('tdu')[0].getAttribute('href'),
-					lift.innerHTML.replace('<div class="clb"></div>',''),
-					rand_time(1,3),
-					DOMAIN + 'lift',
-					liftFN
-				);
-				el.innerHTML = '<div class="lift">' + lift.innerHTML + '</div>';
-				if(!doc.querySelector('.lift .white').classList.contains('nwr')){
-					document.querySelector('.vs .rs.small').textContent = Number(document.querySelector('.vs .rs.small').textContent) + 1;
-				}
-			} else {
-				let ttime = 3;
-				AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
-				let time = doc.querySelector('[id^=time]'),
-					el = document.querySelector('div.vs .flbdy');
-				if(time){
-					ttime = getSecond(getTime(time.innerHTML));
-					time.title = time.innerHTML;
-					time.className = "minor small flr";
-					lift.querySelector('.flr').parentNode.replaceChild(time,lift.querySelector('.flr'));
-					AddMessTable('Ждем посетителя!','',function(){
-						timer(ttime, document.getElementById('log_table_2'), false);
-					});
-				}
-				if(el){
-					el.innerHTML = '<div class="lift">' + lift.innerHTML.replace() + '</div>';
-					if(time && lift.querySelector('.flr')){
-						timer(ttime, el.querySelector('[id^=time]'), true);
+				if (lift && lift.getElementsByClassName('tdu')[0]) {
+					end_xhr(
+						lift.getElementsByClassName('tdu')[0].href ||
+						DOMAIN + lift.getElementsByClassName('tdu')[0].getAttribute('href'),
+						lift.innerHTML.replace('<div class="clb"></div>',''),
+						rand_time(1,3),
+						DOMAIN + 'lift',
+						liftFN
+					);
+					el.innerHTML = '<div class="lift">' + lift.innerHTML + '</div>';
+					if(!lift.querySelector('.lift .white').classList.contains('nwr')){
+						document.querySelector('.vs .rs.small').textContent = Number(document.querySelector('.vs .rs.small').textContent) + 1;
 					}
+				} else {
+					let ttime = 3;
+					AddTable(lift.innerHTML.replace('<div class="clb"></div>',''));
+					let time = doc.querySelector('[id^=time]'),
+						el = document.querySelector('div.vs .flbdy');
+					if(time){
+						ttime = getSecond(getTime(time.innerHTML));
+						time.title = time.innerHTML;
+						time.className = "minor small flr";
+						lift.querySelector('.flr').parentNode.replaceChild(time,lift.querySelector('.flr'));
+						AddMessTable('Ждем посетителя!','',function(){
+							timer(ttime, document.getElementById('log_table_2'), false);
+						});
+					}
+					if(el){
+						el.innerHTML = '<div class="lift">' + lift.innerHTML.replace() + '</div>';
+						if(time && lift.querySelector('.flr')){
+							timer(ttime, el.querySelector('[id^=time]'), true);
+						}
+					}
+					setTimeout(function(){
+						AddMessTable('Развозим дальше','');
+						liftFN();
+					}, ttime*1000);
 				}
+			})
+			.catch(err=>{
+				debuglog(err);
+				console.error(err);
+				AddTable('Лифт сломался, но не отчаивайся - мастера уже на месте!');
+				AddMessTable('Ошибка! Перезапуск через','',function(){
+					timer([0, 0, 0, 10], document.getElementById('log_table_2'), false);
+				});
 				setTimeout(function(){
-					AddMessTable('Развозим дальше','');
 					liftFN();
-				}, ttime*1000);
-			}
-		};
-		xhr.onerror = function() {
-			debuglog(xhr);
-			AddTable('Лифт сломался, но не отчаивайся - мастера уже на месте!');
-			AddMessTable('Ошибка! Перезапуск через','',function(){
-				timer([0, 0, 0, 10], document.getElementById('log_table_2'), false);
-			});
-			setTimeout(function(){
-				liftFN();
-			}, 10000);
-		};
-		xhr.send();
+				}, 10000);
+			})
 	}, rand_time(3,6));
 }
 
@@ -955,6 +947,28 @@ function fetch_promise(url,returnBlock,single = false) {
 				reject(err)
 			});
 	})
+}
+
+
+// Обновление строки с деньгами
+function updateBlocks(doc) {
+	let cash = doc.querySelector('.cash');
+	cash?.querySelector('script')?.remove()
+	document.querySelector('.cash').innerHTML = cash.innerHTML;
+
+	let quests = doc.querySelector('a[href="city/quests"]');
+	let quests_page = document.querySelector('a[href="city/quests"]');
+	if(quests && quests_page){
+		quests_page.closest('.nfl').innerHTML = quests.closest('.nfl').innerHTML;
+	}
+	let doors_page = document.querySelector('a.white.tdn[href="doors"],a.white.tdn[href="city/coll"]');
+	if(doors && doors_page){
+		doors_page.innerHTML = doors.innerHTML;
+		// if(doors_page.querySelector('')){
+		// 	end_xhr('','Задание выполнено',1000,'/home');
+		// }
+	}
+
 }
 
 
