@@ -925,10 +925,10 @@ const min = object=>Object.keys(object).reduce((key, v) => object[v] < object[ke
  * Обёртка fetch Promise, делает запрос к странице и возвращает карточку(и)
  *
  * @param {*} url - адрес страницы
- * @param {*} returnBlock - класс блока карточки(ек), который надо вернуть
- * @param {*} single - выборка массива карточкек (по умолчанию) или одну карточку
+ * @param {*} returnBlock - класс блока(ов), который надо вернуть
+ * @param {*} single - выборка массива блоков (по умолчанию) или один блок
  *
- * @returns Promise documents node
+ * @returns Promise arrays documents select node and document
  *
  */
 function fetch_promise(url,returnBlock,single = false) {
