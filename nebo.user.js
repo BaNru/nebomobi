@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        Небоскреб
 // @namespace   Игры
-// @version     1.9.4
+// @version     1.9.5
 // @description Бот для игры Небоскребы
 // @match       https://nebo.mobi/*
-// @copyright   BaNru (2014-2024)
+// @copyright   BaNru (2014-2025)
 // @author   	BaNru
 // ==/UserScript==
 
@@ -1234,6 +1234,45 @@ window.onload = function() {								// Закомментировать  1 из 
 		fabric();
 		AddTable('Агрофитнес начинаем! Раз, два!','rc');
 		document.querySelector('.cntr.nshd.m5.white').insertAdjacentHTML('beforeend',' <span class="amount"> Собрано: <b class="fabricBot">0</b></span>');
+	// Кнопка "Обучить всех на данной странице" в Жителях Специалистах
+	} else if (document?.title == 'Мои жители' && document.querySelector('[href*="humanPanel:upgradeLinkPanel"]')) {
+		document.querySelector('table.rtgh').insertAdjacentHTML('beforebegin', '<a class="nfl upgradeAllHuman" style="display: block;cursor: pointer;">Обучить всех на данной странице</a>');
+		document.querySelector('.upgradeAllHuman').addEventListener('click', async (btn) => {
+			let timerHuman = 1;
+			const items = Array.from(document.querySelectorAll('[href*="humanPanel:upgradeLinkPanel"]'));
+			btn.target.textContent = 'Идёт обучение 0 их ' + items.length;
+			btn.target.style.cursor = "wait";
+			let shouldStop = false;
+			for (const item of items) {
+				if (shouldStop) break; // Останавливаем, если были проблемы
+				await new Promise(resolve => setTimeout(
+					resolve,
+					timerHuman += rand_time(1,2)
+				)).then(async () => {
+					const response = await fetch(item.href);
+					if (/\/home/.exec(response.url)) {
+						item.innerHTML = '<i style="color:#d66">✘</i> Не обучили. Обновите страницу и повторите!';
+						btn.target.style.background = '#b22';
+						btn.target.textContent = 'Обновите страницу и перезапустите обучение';
+						btn.target.style.cursor = "";
+						btn.target.href = '/humans';
+						shouldStop = true; // Остановка при ошибке
+						return;
+					} else {
+						item.removeAttribute('href');
+						item.style.textDecoration = 'none!important';
+						item.innerHTML = '<b style="color:#0f0">✓</b> Успешно обучили';
+						btn.target.textContent = 'Идёт обучение ' + (items.length - document.querySelectorAll('[href*="humanPanel:upgradeLinkPanel"]').length) + ' их ' + items.length;
+					}
+					// Дополнительное условие
+					// if(){shouldStop = true;}
+				});
+			}
+			if (!shouldStop) {
+				btn.target.textContent = 'Обучение ' + items.length + ' жителей завершено!';
+				btn.target.style.background = '#061';
+			}
+		}, { once: true })
 	} else {
 		AddTable(`Бот автоматически запускается на страницах:<br>
 			<a href="/lift" title="Лифт" target="_blank">Лифт</a><br>
