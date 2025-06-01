@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Небоскреб
 // @namespace   Игры
-// @version     1.9.5
+// @version     1.9.6
 // @description Бот для игры Небоскребы
 // @match       https://nebo.mobi/*
 // @copyright   BaNru (2014-2025)
@@ -9,7 +9,7 @@
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.9.4';
+BOT.version = '1.9.6';
 const DOMAIN = 'https://nebo.mobi/';
 const DOMAIN_NAME = 'nebo.mobi';
 
@@ -1058,7 +1058,7 @@ function fabric(url){
 		// Забрать
 		// ?wicket:interface=:[0-9]{5}:product1:collectContainer:collectLink::ILinkListener::"
 		fetch_promise(url,'.flbdy.snow3_.gift_', true)
-			.then(block=>{
+			.then(([block, doc]) =>{
 				let link = block.querySelector('.tdu') && block.querySelector('.tdu').getAttribute('href');
 				let time = block.querySelector('[id*="time_"]');
 
@@ -1232,7 +1232,7 @@ window.onload = function() {								// Закомментировать  1 из 
 		doors();
 	} else if (/\/fabric/.exec(window.location.pathname)) {
 		fabric();
-		AddTable('Агрофитнес начинаем! Раз, два!','rc');
+		AddTable('Автоматизация началась!','rc');
 		document.querySelector('.cntr.nshd.m5.white').insertAdjacentHTML('beforeend',' <span class="amount"> Собрано: <b class="fabricBot">0</b></span>');
 	// Кнопка "Обучить всех на данной странице" в Жителях Специалистах
 	} else if (document?.title == 'Мои жители' && document.querySelector('[href*="humanPanel:upgradeLinkPanel"]')) {
