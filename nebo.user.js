@@ -1,15 +1,16 @@
 // ==UserScript==
 // @name        Небоскреб
 // @namespace   Игры
-// @version     1.9.6
+// @version     1.9.6.1
 // @description Бот для игры Небоскребы
 // @match       https://nebo.mobi/*
 // @copyright   BaNru (2014-2025)
-// @author   	BaNru
+// @author      BaNru
+// @tag         game bot
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.9.6';
+BOT.version = '1.9.6.1';
 const DOMAIN = 'https://nebo.mobi/';
 const DOMAIN_NAME = 'nebo.mobi';
 
@@ -1059,8 +1060,12 @@ function fabric(url){
 		// ?wicket:interface=:[0-9]{5}:product1:collectContainer:collectLink::ILinkListener::"
 		fetch_promise(url,'.flbdy.snow3_.gift_', true)
 			.then(([block, doc]) =>{
-				let link = block.querySelector('.tdu') && block.querySelector('.tdu').getAttribute('href');
-				let time = block.querySelector('[id*="time_"]');
+				if (!block) {
+					setTimeout(() => {
+						fabric();
+					}, rand_time());
+					return false;
+				}
 
 				// findFloor
 				var floor = url.match(/fabric\/floor\/0\/([0-9])/);
@@ -1075,6 +1080,7 @@ function fabric(url){
 						}
 					}
 				}
+				let time = block.querySelector('[id*="time_"]');
 				if(floor){
 					let el = document.querySelectorAll('.fd > .flbdy, .sr > .flbdy, .rc > .flbdy, .fs > .flbdy, .el > .flbdy')[floor-1]
 					el.innerHTML = block.innerHTML;
@@ -1086,7 +1092,8 @@ function fabric(url){
 				}
 
 				AddTable(block.innerHTML);
-
+				let link = block.querySelector('.tdu')?.getAttribute('href');
+				floor = floor || 1;
 				if (link && /startContainer/.test(link)) {
 					fabric(link);
 				} else if (link && /collectContainer/.test(link)) {
