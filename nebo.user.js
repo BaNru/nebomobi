@@ -1,16 +1,17 @@
 // ==UserScript==
 // @name        Небоскреб
 // @namespace   Игры
-// @version     1.9.6.1
+// @version     1.9.6.2
 // @description Бот для игры Небоскребы
 // @match       https://nebo.mobi/*
+// @icon        https://nebo.mobi/images/icons/home.png
 // @copyright   BaNru (2014-2025)
 // @author      BaNru
 // @tag         game bot
 // ==/UserScript==
 
 var BOT = {};
-BOT.version = '1.9.6.1';
+BOT.version = '1.9.6.2';
 const DOMAIN = 'https://nebo.mobi/';
 const DOMAIN_NAME = 'nebo.mobi';
 
@@ -1074,7 +1075,7 @@ function fabric(url){
 				}else{
 					let img = block.querySelector('.flogo');
 					if(img){
-						img = img.src.match(/september2024\/(?:ready|time)([0-9])\.(?:gif|png)/);
+						img = img.src.match(/([0-9])\.(?:gif|png)/);
 						if(img && img[1]){
 							floor = img[1];
 						}
@@ -1093,18 +1094,27 @@ function fabric(url){
 
 				AddTable(block.innerHTML);
 				let link = block.querySelector('.tdu')?.getAttribute('href');
-				floor = floor || 1;
 				if (link && /startContainer/.test(link)) {
 					fabric(link);
 				} else if (link && /collectContainer/.test(link)) {
 					fabric(link);
 					document.querySelector('.fabricBot').textContent = parseInt(document.querySelector('.fabricBot').textContent)+1;
-				} else if (time){
-					TIMERS['fabric/floor/0/'+floor] = Datenow() + getSecond(getTime(time.textContent));
+				} else if (time && floor) {
+					TIMERS['fabric/floor/0/' + floor] = Datenow() + getSecond(getTime(time.textContent));
+					fabric();
+				} else if (floor) {
+					TIMERS['fabric/floor/0/' + floor] = 3;
 					fabric();
 				} else {
-					TIMERS['fabric/floor/0/'+floor] = 3;
-					fabric();
+					AddTable('Ошибка. Пробуем ещё раз!!');
+					setTimeout(() => {
+						fabric();
+					}, 3000);
+				}
+
+				// Обновляем количество билетов
+				if(doc.querySelector('.snow3_ img[src*="ticket"] + span')){
+					document.querySelector('.snow3_ img[src*="ticket"] + span').textContent = parseInt(doc.querySelector('.snow3_ img[src*="ticket"] + span').textContent);
 				}
 			})
 			.catch(err=>{
